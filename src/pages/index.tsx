@@ -1,6 +1,7 @@
 import Head from "next/head";
 
 import Transfer from "pages-lib/Transfer";
+import TokensProvider from "context/TokensProvider";
 
 export default function Home() {
   return (
@@ -12,7 +13,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Transfer />
+      <TokensProvider>
+        <Transfer />
+      </TokensProvider>
     </>
   );
 }
