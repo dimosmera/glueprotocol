@@ -1,7 +1,9 @@
 import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 
+import "styles/designTokens.css";
 import "styles/globals.css";
+import "styles/utilities.css";
 
 import AppQueryClientProvider from "context/AppQueryClientProvider";
 import PhantomProvider from "context/PhantomProvider";
