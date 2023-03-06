@@ -6,10 +6,14 @@
   --white: #ffffff;
   --black: #000000;
   --black-pearl: #09162E;
+  --blue-zodiac: #0E1C37;
+  --cloud-burst: #202E49;
+  --heather: #B7BECB;
+  --dodger-blue: #2669F5;
 
-  --font-size-sm: 0.875rem;
+  --font-size-sm: 0.785rem;
   --font-size-md: 1rem;
-  --font-size-lg: 1.25rem;
-  --font-size-xl: 1.45rem;
+  --font-size-lg: 1.15rem;
+  --font-size-xl: 1.35rem;
   --font-size-xxl: 1.75rem;
 }
