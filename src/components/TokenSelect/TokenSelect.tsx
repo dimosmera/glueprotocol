@@ -15,7 +15,7 @@ const TokenSelect = () => {
     fireSweetAlert({
       html: <Content tokens={tokens} />,
       showConfirmButton: false,
-      background: "#202E49",
+      background: "#0E1C37",
     });
   };
 
