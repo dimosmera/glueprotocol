@@ -1,5 +1,8 @@
+import { Inter } from "next/font/google";
 import Swal, { SweetAlertOptions } from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+
+const inter = Inter({ subsets: ["latin"] });
 
 const SweetAlert = withReactContent(Swal);
 
@@ -17,7 +20,10 @@ export const fireErrorAlert = (titleText?: string, timer?: number) =>
     icon: "error",
     timer: timer || 5000,
     showConfirmButton: false,
-    titleText:
-      titleText ||
-      "Something went wrong. Please reload the page and try again.",
+    title: (
+      <p className={inter.className}>
+        {titleText ||
+          "Something went wrong. Please reload the page and try again."}
+      </p>
+    ),
   });
