@@ -1,0 +1,9 @@
+.container {
+  border: 1px solid var(--fiord);
+  cursor: pointer;
+  height: 40px;
+  margin: 0px 8px 0px 12px;
+  padding: 0px 13px 0px 8px;
+  min-width: 71px;
+  border-radius: 8px;
+}

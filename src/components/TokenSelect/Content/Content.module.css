@@ -1,0 +1,11 @@
+.container {
+  color: var(--white);
+
+  flex-direction: column;
+
+  width: 100%;
+}
+
+.item {
+  cursor: pointer;
+}

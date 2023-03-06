@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import classList from "utils/classList";
+import TokenSelect from "components/TokenSelect";
 
 import styles from "./AmountInput.module.css";
 
@@ -39,7 +40,7 @@ const AmountInput = ({ title }: Props) => {
           className={`semi-bold-text ${styles.input}`}
         />
 
-        <div className={`flexbox ${styles["coin-container"]}`}></div>
+        <TokenSelect />
       </div>
     </div>
   );
