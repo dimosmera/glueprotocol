@@ -35,7 +35,7 @@ const SearchInput = ({ onInputChange }: Props) => {
 
       <input
         type="text"
-        placeholder="Find tokens by name"
+        placeholder="Search by token or address"
         className={styles["search-input"]}
         onChange={(e) => onInputChange(e.target.value)}
         onFocus={handleFocus}

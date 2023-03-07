@@ -22,8 +22,6 @@ interface Props {
 const Content = ({ tokens }: Props) => {
   const [search, setSearch] = useState("");
 
-  console.log("tokens: ", tokens);
-
   const handleTokenSelect = (index: number) => {
     console.log("index: ", index);
   };
@@ -32,7 +30,19 @@ const Content = ({ tokens }: Props) => {
     setSearch(value);
   };
 
-  console.log("search: ", search);
+  // Using <for-loop> instead of <filter> (avoids creating a new array until it's needed)
+  // and <indexOf> instead of <includes> (faster searching a string within another string)
+  const filteredTokens = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const token = tokens[i];
+    if (
+      token.name.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1 ||
+      token.symbol.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1 ||
+      token.address.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+    ) {
+      filteredTokens.push(token);
+    }
+  }
 
   return (
     <div className={classList([inter.className, "flexbox", styles.container])}>
@@ -40,10 +50,10 @@ const Content = ({ tokens }: Props) => {
 
       <List
         height={500}
-        itemCount={tokens.length}
+        itemCount={filteredTokens.length}
         itemSize={55}
         width="100%"
-        itemData={{ tokens, onSelect: handleTokenSelect }}
+        itemData={{ tokens: filteredTokens, onSelect: handleTokenSelect }}
       >
         {Token}
       </List>
