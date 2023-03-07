@@ -5,13 +5,3 @@
 
   width: 100%;
 }
-
-.item {
-  cursor: pointer;
-
-  border-radius: 8px;
-}
-
-.item:hover {
-  background-color: var(--cloud-burst);
-}

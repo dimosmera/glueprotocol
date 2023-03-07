@@ -6,6 +6,8 @@ import classList from "utils/classList";
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 
 import SearchInput from "./SearchInput";
+import Token from "./Token";
+
 import styles from "./Content.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -13,36 +15,6 @@ const inter = Inter({ subsets: ["latin"] });
 interface Props {
   tokens: IToken[];
 }
-
-interface RowProps {
-  index: number;
-  style: React.CSSProperties;
-  data: {
-    tokens: IToken[];
-    onSelect: (index: number) => void;
-  };
-}
-
-const Row = ({ index, style, data }: RowProps) => {
-  const { tokens, onSelect } = data;
-
-  const token = tokens[index];
-  // console.log('item: ', item);
-
-  const handleSelect = () => {
-    onSelect(index);
-  };
-
-  return (
-    <div
-      style={style}
-      className={`flexbox ${styles.item}`}
-      onClick={handleSelect}
-    >
-      {token.symbol}
-    </div>
-  );
-};
 
 /**
  * Rendered within SweetAlert's custom HTML
@@ -73,7 +45,7 @@ const Content = ({ tokens }: Props) => {
         width="100%"
         itemData={{ tokens, onSelect: handleTokenSelect }}
       >
-        {Row}
+        {Token}
       </List>
     </div>
   );
