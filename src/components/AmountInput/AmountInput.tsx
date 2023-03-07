@@ -7,9 +7,10 @@ import styles from "./AmountInput.module.css";
 
 interface Props {
   title: string;
+  type: "input" | "output";
 }
 
-const AmountInput = ({ title }: Props) => {
+const AmountInput = ({ title, type }: Props) => {
   const [focused, setFocused] = useState(false);
 
   const handleFocus = () => {
@@ -40,7 +41,7 @@ const AmountInput = ({ title }: Props) => {
           className={`semi-bold-text ${styles.input}`}
         />
 
-        <TokenSelect />
+        <TokenSelect type={type} />
       </div>
     </div>
   );

@@ -17,18 +17,22 @@ const inter = Inter({ subsets: ["latin"] });
 
 interface Props {
   tokens: IToken[];
+  onTokenSelect: (selectedToken: IToken) => void;
 }
-
-// TODO: pass select back
 
 /**
  * Rendered within SweetAlert's custom HTML
  */
-const ModalContent = ({ tokens }: Props) => {
+const ModalContent = ({ tokens, onTokenSelect }: Props) => {
   const [search, setSearch] = useState("");
 
-  const handleTokenSelect = (index: number) => {
-    console.log("index: ", index);
+  const handleTokenSelect = (selectedTokenAddress: IToken["address"]) => {
+    const selectedToken = tokens.find(
+      (token) => token.address === selectedTokenAddress
+    );
+    if (!selectedToken) throw new Error("Token not found after selected?");
+
+    onTokenSelect(selectedToken);
   };
 
   const handleSeachChange = (value: string) => {

@@ -5,9 +5,9 @@ import styles from "./Transfer.module.css";
 const Transfer = () => {
   return (
     <div className={`flexbox ${styles.container}`}>
-      <AmountInput title="You send exactly" />
+      <AmountInput title="You send exactly" type="input" />
 
-      <AmountInput title="Recipient receives" />
+      <AmountInput title="Recipient receives" type="output" />
     </div>
   );
 };

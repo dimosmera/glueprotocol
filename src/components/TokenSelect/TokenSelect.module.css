@@ -3,7 +3,14 @@
   cursor: pointer;
   height: 40px;
   margin: 0px 8px 0px 12px;
-  padding: 0px 13px 0px 8px;
-  min-width: 71px;
+  padding: 0px 12px;
   border-radius: 8px;
+}
+
+.token-symbol {
+  color: var(--white);
+  font-size: var(--font-size-md);
+
+  margin-left: 8px;
+  margin-right: 5px;
 }

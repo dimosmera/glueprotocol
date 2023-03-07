@@ -2,6 +2,7 @@ import Head from "next/head";
 
 import Transfer from "pages-lib/Transfer";
 import TokensProvider from "context/TokensProvider";
+import UserInputsProvider from "context/UserInputsProvider";
 
 export default function Home() {
   return (
@@ -14,7 +15,9 @@ export default function Home() {
       </Head>
 
       <TokensProvider>
-        <Transfer />
+        <UserInputsProvider>
+          <Transfer />
+        </UserInputsProvider>
       </TokensProvider>
     </>
   );

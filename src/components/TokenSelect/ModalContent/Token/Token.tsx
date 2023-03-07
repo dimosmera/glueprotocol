@@ -9,7 +9,7 @@ interface Props {
   style: React.CSSProperties;
   data: {
     tokens: IToken[];
-    onSelect: (index: number) => void;
+    onSelect: (address: IToken["address"]) => void;
   };
 }
 
@@ -20,7 +20,7 @@ const Token = ({ index, style, data }: Props) => {
   const { logoURI, name, symbol, address } = token;
 
   const handleSelect = () => {
-    onSelect(index);
+    onSelect(address);
   };
 
   return (
