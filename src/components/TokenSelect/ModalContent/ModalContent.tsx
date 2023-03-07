@@ -69,7 +69,7 @@ const ModalContent = ({ tokens, onTokenSelect }: Props) => {
 
       <SearchInput onInputChange={handleSeachChange} />
 
-      <MostUsedTokens />
+      <MostUsedTokens onTokenSelect={handleTokenSelect} />
 
       <List
         height={500}

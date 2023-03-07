@@ -6,11 +6,16 @@ import styles from "./TokenTag.module.css";
 interface Props {
   symbol: IToken["symbol"];
   logoURI: IToken["logoURI"];
+  address: IToken["address"];
+  onTokenSelect: (address: IToken["address"]) => void;
 }
 
-const TokenTag = ({ symbol, logoURI }: Props) => {
+const TokenTag = ({ symbol, logoURI, address, onTokenSelect }: Props) => {
   return (
-    <div className={`flexbox ${styles.container}`}>
+    <div
+      className={`flexbox ${styles.container}`}
+      onClick={() => onTokenSelect(address)}
+    >
       <Image
         src={logoURI}
         alt={`${symbol} token logo`}
