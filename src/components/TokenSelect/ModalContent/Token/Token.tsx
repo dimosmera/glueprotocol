@@ -29,7 +29,7 @@ const Token = ({ index, style, data }: Props) => {
       className={`flexbox ${styles.container}`}
       onClick={handleSelect}
     >
-      <Image src={logoURI} alt="Token logo" width={35} height={35} />
+      <Image src={logoURI} alt={`${name} token logo"`} width={35} height={35} />
 
       <div className={`flexbox ${styles["text-container"]}`}>
         <div className="flexbox">
