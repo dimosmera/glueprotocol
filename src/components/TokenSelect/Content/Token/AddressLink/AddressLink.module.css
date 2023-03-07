@@ -1,0 +1,25 @@
+.container {
+  background-color: var(--fiord);
+  border: 1px solid var(--fiord);
+
+  width: max-content;
+
+  padding: .2rem;
+  cursor: pointer;
+  border-radius: 4px;
+
+  margin-left: 15px;
+
+  text-decoration: none;
+}
+
+.container:hover {
+  border: 1px solid var(--heather);
+}
+
+.address-text {
+  font-size: var(--font-size-xs);
+  color: var(--heather);
+
+  margin-right: 5px;;
+}

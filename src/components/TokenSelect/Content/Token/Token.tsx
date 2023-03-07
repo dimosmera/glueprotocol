@@ -1,6 +1,7 @@
 import Image from "components/Image";
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 
+import AddressLink from "./AddressLink";
 import styles from "./Token.module.css";
 
 interface Props {
@@ -16,7 +17,7 @@ const Token = ({ index, style, data }: Props) => {
   const { tokens, onSelect } = data;
 
   const token = tokens[index];
-  const { logoURI, name, symbol } = token;
+  const { logoURI, name, symbol, address } = token;
 
   const handleSelect = () => {
     onSelect(index);
@@ -31,7 +32,11 @@ const Token = ({ index, style, data }: Props) => {
       <Image src={logoURI} alt="Token logo" width={35} height={35} />
 
       <div className={`flexbox ${styles["text-container"]}`}>
-        <p className={styles["token-symbol"]}>{symbol}</p>
+        <div className="flexbox">
+          <p className={styles["token-symbol"]}>{symbol}</p>
+
+          <AddressLink address={address} />
+        </div>
 
         <p className={styles["token-name"]}>{name}</p>
       </div>
