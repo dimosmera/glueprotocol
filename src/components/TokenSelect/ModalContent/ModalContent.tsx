@@ -9,6 +9,7 @@ import { closeAlert } from "components/SweetAlerts";
 
 import SearchInput from "./SearchInput";
 import Token from "./Token";
+import MostUsedTokens from "./MostUsedTokens";
 
 import styles from "./ModalContent.module.css";
 
@@ -18,8 +19,7 @@ interface Props {
   tokens: IToken[];
 }
 
-// TODO: Title with x icon and most used tokens
-// Then pass select back
+// TODO: pass select back
 
 /**
  * Rendered within SweetAlert's custom HTML
@@ -64,6 +64,8 @@ const ModalContent = ({ tokens }: Props) => {
       </div>
 
       <SearchInput onInputChange={handleSeachChange} />
+
+      <MostUsedTokens />
 
       <List
         height={500}
