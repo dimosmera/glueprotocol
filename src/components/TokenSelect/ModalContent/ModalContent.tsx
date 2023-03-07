@@ -8,7 +8,7 @@ import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 import SearchInput from "./SearchInput";
 import Token from "./Token";
 
-import styles from "./Content.module.css";
+import styles from "./ModalContent.module.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,7 +19,7 @@ interface Props {
 /**
  * Rendered within SweetAlert's custom HTML
  */
-const Content = ({ tokens }: Props) => {
+const ModalContent = ({ tokens }: Props) => {
   const [search, setSearch] = useState("");
 
   const handleTokenSelect = (index: number) => {
@@ -61,4 +61,4 @@ const Content = ({ tokens }: Props) => {
   );
 };
 
-export default Content;
+export default ModalContent;

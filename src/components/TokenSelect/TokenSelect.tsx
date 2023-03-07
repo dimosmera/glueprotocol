@@ -1,7 +1,7 @@
 import { fireSweetAlert } from "components/SweetAlerts";
 import { useGetTokens } from "context/TokensProvider/TokensProvider";
 
-import Content from "./Content";
+import ModalContent from "./ModalContent";
 import styles from "./TokenSelect.module.css";
 
 const TokenSelect = () => {
@@ -13,7 +13,7 @@ const TokenSelect = () => {
 
   const handleOpenList = () => {
     fireSweetAlert({
-      html: <Content tokens={tokens} />,
+      html: <ModalContent tokens={tokens} />,
       showConfirmButton: false,
       background: "#0E1C37",
     });
