@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { TokenType } from "types";
 import classList from "utils/classList";
 import TokenSelect from "components/TokenSelect";
 
@@ -8,7 +9,7 @@ import styles from "./AmountInput.module.css";
 
 interface Props {
   title: string;
-  type: "input" | "output";
+  type: TokenType;
 }
 
 const AmountInput = ({ title, type }: Props) => {

@@ -1,3 +1,4 @@
+import { TokenType } from "types";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import { ActionTypes } from "context/UserInputsProvider/reducer";
 
@@ -7,7 +8,7 @@ import styles from "./Input.module.css";
 interface Props {
   onFocus: () => void;
   onBlur: () => void;
-  type: "input" | "output";
+  type: TokenType;
 }
 
 const MAX_AMOUNT = 100_000_000_000;

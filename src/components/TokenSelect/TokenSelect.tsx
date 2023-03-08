@@ -1,5 +1,6 @@
 import { FiChevronDown } from "react-icons/fi";
 
+import { TokenType } from "types";
 import { closeAlert, fireSweetAlert } from "components/SweetAlerts";
 import { useGetTokens } from "context/TokensProvider/TokensProvider";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
@@ -11,7 +12,7 @@ import ModalContent from "./ModalContent";
 import styles from "./TokenSelect.module.css";
 
 interface Props {
-  type: "input" | "output";
+  type: TokenType;
 }
 
 const TokenSelect = ({ type }: Props) => {
