@@ -1,8 +1,7 @@
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
-
 import { ActionTypes } from "context/UserInputsProvider/reducer";
-import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 
+import formatInputAmount from "./formatInputAmount";
 import styles from "./Input.module.css";
 
 interface Props {
@@ -12,19 +11,6 @@ interface Props {
 }
 
 const MAX_AMOUNT = 100_000_000_000;
-
-/**
- * Format integer part with commas
- * Surprisingly complex to do in the input onChange since the cursor moves to the end
- * https://github.com/facebook/react/issues/955, https://stackoverflow.com/a/60131033/11688901
- */
-const formatNumber = (value: string, symbol: IToken["symbol"]) => {
-  const parts = value.split(".");
-  const integer = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  const decimal = parts.length > 1 ? `.${parts[1]}` : "";
-
-  return `${integer}${decimal} ${symbol}`;
-};
 
 const Input = ({ onFocus, onBlur, type }: Props) => {
   const { inputs, dispatch } = useUserInputs();
@@ -72,7 +58,7 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
 
       {amount && Number(amount) >= 1_000 && (
         <p className={styles["human-readable-number"]}>
-          {formatNumber(amount, symbol)}
+          {formatInputAmount(amount, symbol)}
         </p>
       )}
     </div>
