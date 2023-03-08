@@ -1,8 +1,10 @@
 import { TokenType } from "types";
-import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import { ActionTypes } from "context/UserInputsProvider/reducer";
+import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 
+import useRoutes from "./useRoutes";
 import formatInputAmount from "./formatInputAmount";
+
 import styles from "./Input.module.css";
 
 interface Props {
@@ -15,6 +17,13 @@ const MAX_AMOUNT = 100_000_000_000;
 
 const Input = ({ onFocus, onBlur, type }: Props) => {
   const { inputs, dispatch } = useUserInputs();
+
+  const { tokens: stateTokens, amounts } = inputs;
+
+  const { symbol } = stateTokens[type];
+  const amount = amounts[type];
+
+  const { fireRequestForRoutes } = useRoutes();
 
   const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     // Remove any non-numeric characters except decimal point
@@ -30,6 +39,10 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
         inputAmount: value,
       });
 
+      if (value && value !== "0") {
+        fireRequestForRoutes("input", value);
+      }
+
       return;
     }
 
@@ -37,12 +50,11 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
       type: ActionTypes.SET_OUTPUT_AMOUNT,
       outputAmount: value,
     });
+
+    if (value && value !== "0") {
+      fireRequestForRoutes("output", value);
+    }
   };
-
-  const { tokens: stateTokens, amounts } = inputs;
-
-  const { symbol } = stateTokens[type];
-  const amount = amounts[type];
 
   return (
     <div className={`flexbox ${styles.container}`}>

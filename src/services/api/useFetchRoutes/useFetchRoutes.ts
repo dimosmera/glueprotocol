@@ -1,46 +1,34 @@
-import { useQuery, UseQueryOptions } from "react-query";
+import { useMutation } from "react-query";
 
 import http from "services/api/config/http";
 
-export interface SwapRoute {
-  inAmount: string;
-  outAmount: string;
+interface Body {
+  inputMint: string;
+  outputMint: string;
+  amount: number;
+  swapMode: "ExactIn" | "ExactOut";
+  /**
+   * This is in basis points (1/100th of a percent). So 100 = 1%.
+   * Transactions will revert if the price changes unfavorably by more than this percentage
+   * For ExactOut, keep this low to ensure you get at least the amount specified
+   */
+  slippageBps: number;
 }
 
-interface APIResults {
-  data: {
-    data: SwapRoute[];
-  };
-}
-
-const useFetchRoutes = (
-  inputMint: string,
-  outputMint: string,
-  amount: number,
-  queryOptions?: UseQueryOptions<
-    unknown,
-    unknown,
-    {
-      routes: SwapRoute[];
-    },
-    (string | number | null)[]
-  >
-) => {
-  return useQuery(
-    ["routes", inputMint, outputMint, amount],
-    async () =>
+/**
+ * ExactIn vs ExactOut swapMode
+ * For <ExactIn> <amount> should be <inputMint>: How much of the input token do we want to swap?
+ * For <ExactOut> <amount> should be <outputMint>: How much should the receiver get of their token of choice?
+ * ---,---
+ * For <ExactIn> you need to pass <outAmount> to the transfer ix
+ * For <ExactOut> you can just use the <amount>
+ */
+const useFetchRoutes = () => {
+  return useMutation(
+    async ({ swapMode, inputMint, outputMint, amount, slippageBps }: Body) =>
       http().get(
-        `https://quote-api.jup.ag/v4/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=100`
-      ),
-    {
-      // @ts-ignore
-      select: (results: APIResults) => {
-        const { data } = results.data;
-
-        return { routes: data };
-      },
-      ...queryOptions,
-    }
+        `https://quote-api.jup.ag/v4/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&swapMode=${swapMode}`
+      )
   );
 };
 
