@@ -24,6 +24,18 @@
   box-shadow: rgb(9 22 46) 0px 6px 12px 0px;
 }
 
+.numbers-container {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.human-readable-number {
+  color: var(--heather);
+  font-size: var(--font-size-xs);
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
 .blue-outline {
   border: 1px solid var(--dodger-blue);
 }
