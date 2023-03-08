@@ -5,8 +5,10 @@ export interface Inputs {
     input: IToken;
     output: IToken;
   };
-  inputAmount: number;
-  outputAmount: number;
+  amounts: {
+    input: string;
+    output: string;
+  };
   destinationAddress: string;
 }
 
@@ -21,8 +23,8 @@ export enum ActionTypes {
 export type Action =
   | { type: ActionTypes.SET_INPUT_TOKEN; inputToken: IToken }
   | { type: ActionTypes.SET_OUTPUT_TOKEN; outputToken: IToken }
-  | { type: ActionTypes.SET_INPUT_AMOUNT; inputAmount: number }
-  | { type: ActionTypes.SET_OUTPUT_AMOUNT; outputAmount: number }
+  | { type: ActionTypes.SET_INPUT_AMOUNT; inputAmount: string }
+  | { type: ActionTypes.SET_OUTPUT_AMOUNT; outputAmount: string }
   | { type: ActionTypes.SET_DESTINATION_ADDRESS; destinationAddress: string };
 
 export type Dispatch = (action: Action) => void;
@@ -40,9 +42,15 @@ export const reducer = (state: Inputs, action: Action): Inputs => {
         tokens: { ...state.tokens, output: action.outputToken },
       };
     case ActionTypes.SET_INPUT_AMOUNT:
-      return { ...state, inputAmount: action.inputAmount };
+      return {
+        ...state,
+        amounts: { ...state.amounts, input: action.inputAmount },
+      };
     case ActionTypes.SET_OUTPUT_AMOUNT:
-      return { ...state, outputAmount: action.outputAmount };
+      return {
+        ...state,
+        amounts: { ...state.amounts, output: action.outputAmount },
+      };
     case ActionTypes.SET_DESTINATION_ADDRESS:
       return { ...state, destinationAddress: action.destinationAddress };
     default:

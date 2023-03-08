@@ -38,8 +38,10 @@ const UserInputsProvider = ({ children }: Props) => {
           "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
       },
     },
-    inputAmount: 0,
-    outputAmount: 0,
+    amounts: {
+      input: "",
+      output: "",
+    },
     destinationAddress: "",
   });
 
