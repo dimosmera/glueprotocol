@@ -15,6 +15,8 @@ import getMainnetConnection from "utils/getMainnetConnection";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 
+import styles from "./SwapButton.module.css";
+
 const SwapButton = () => {
   const { publicKey, signAndSendTransaction, detectPhantom, connect } =
     useGetPhantomContext();
@@ -148,8 +150,8 @@ const SwapButton = () => {
   };
 
   return (
-    <button onClick={handleSwap}>
-      {!publicKey ? "Connect Wallet" : "Swap"}
+    <button onClick={handleSwap} className={styles.button}>
+      {!publicKey ? "Connect Wallet" : "Swap & Transfer"}
     </button>
   );
 };
