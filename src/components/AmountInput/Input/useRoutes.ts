@@ -84,7 +84,7 @@ const useRoutes = () => {
 
     fireRequestForRoutes("input", debouncedInputAmount);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedInputAmount]);
+  }, [debouncedInputAmount, stateTokens]);
 
   const debouncedOutputAmount = useDebouncedValue(amounts.output, 500);
   useEffect(() => {
@@ -97,7 +97,7 @@ const useRoutes = () => {
 
     fireRequestForRoutes("output", debouncedOutputAmount);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedOutputAmount]);
+  }, [debouncedOutputAmount, stateTokens]);
 };
 
 export default useRoutes;
