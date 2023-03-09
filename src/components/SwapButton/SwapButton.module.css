@@ -16,3 +16,10 @@
 .button:hover {
   background-color: var(--denim);
 }
+
+.button:disabled {
+  background-color: var(--fiord);
+  box-shadow: none;
+  cursor: default;
+  color: var(--waterloo);
+}

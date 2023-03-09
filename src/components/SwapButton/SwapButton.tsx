@@ -25,9 +25,16 @@ const SwapButton = () => {
   const { publicKey, signAndSendTransaction, detectPhantom, connect } =
     useGetPhantomContext();
 
-  const { inputs } = useUserInputs();
-
   const { mutateAsync: fetchSwapTransaction } = useFetchSwapTransaction();
+
+  const { inputs } = useUserInputs();
+  const { swapTransactionInputs, destinationAddress, tokens } = inputs;
+
+  const isDisabled =
+    publicKey &&
+    (!swapTransactionInputs ||
+      !destinationAddress ||
+      destinationAddress === "");
 
   const handleSwap = async () => {
     if (!publicKey) {
@@ -46,16 +53,11 @@ const SwapButton = () => {
       return;
     }
 
-    const { swapTransactionInputs, destinationAddress, tokens } = inputs;
     const outputToken = tokens.output;
 
-    if (
-      !swapTransactionInputs ||
-      !destinationAddress ||
-      destinationAddress === ""
-    )
-      return;
+    if (isDisabled) return;
 
+    // @ts-ignore - Surprisingly, TS cannot infer we are checking for this
     const { route, amount: transferAmount } = swapTransactionInputs;
 
     try {
@@ -169,7 +171,11 @@ const SwapButton = () => {
   };
 
   return (
-    <button onClick={handleSwap} className={styles.button}>
+    <button
+      onClick={handleSwap}
+      className={styles.button}
+      disabled={isDisabled}
+    >
       {!publicKey ? "Connect Wallet" : "Swap & Transfer"}
     </button>
   );
