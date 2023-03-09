@@ -23,7 +23,16 @@ export const fireErrorAlert = (titleText?: string, timer?: number) =>
     title: (
       <p className={inter.className}>
         {titleText ||
-          "Something went wrong. Please reload the page and try again."}
+          "Something went wrong. Please reload the page and try again"}
       </p>
     ),
+  });
+
+export const fireLoadingAlert = (titleText?: string) =>
+  fireSweetAlert({
+    didOpen: () => SweetAlert.showLoading(),
+    toast: true,
+    position: "top-end",
+    showConfirmButton: false,
+    title: <p className={inter.className}>{titleText || "Loading"}</p>,
   });

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
@@ -18,6 +19,7 @@ import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import isSolToken from "utils/isSolToken";
 import getDestinationPubKey from "utils/getDestinationPubKey";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
+import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 
 import styles from "./SwapButton.module.css";
 
@@ -26,6 +28,8 @@ const SwapButton = () => {
     useGetPhantomContext();
 
   const { mutateAsync: fetchSwapTransaction } = useFetchSwapTransaction();
+
+  const [loadingTransferTx, setLoadingTransferTx] = useState(false);
 
   const { inputs } = useUserInputs();
   const { swapTransactionInputs, destinationAddress, tokens } = inputs;
@@ -55,7 +59,10 @@ const SwapButton = () => {
 
     const outputToken = tokens.output;
 
-    if (isDisabled) return;
+    if (isDisabled || loadingTransferTx) return;
+
+    fireLoadingAlert();
+    setLoadingTransferTx(true);
 
     // @ts-ignore - Surprisingly, TS cannot infer we are checking for this
     const { route, amount: transferAmount } = swapTransactionInputs;
@@ -93,8 +100,7 @@ const SwapButton = () => {
 
       const destinationWallet = await getDestinationPubKey(destinationAddress);
       if (destinationWallet === null) {
-        console.log("destinationWallet is null error");
-        // TODO:
+        fireErrorAlert("Failed. Check the recipient address");
         return;
       }
 
@@ -165,8 +171,17 @@ const SwapButton = () => {
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
-    } catch (error) {
+    } catch (error: any) {
+      console.log('error: ', error);
       console.error(error);
+
+      if (error && error.code === 4001) {
+        fireErrorAlert("Canceled");
+      } else {
+        fireErrorAlert("Failed. Please try again");
+      }
+    } finally {
+      setLoadingTransferTx(false);
     }
   };
 
@@ -174,7 +189,7 @@ const SwapButton = () => {
     <button
       onClick={handleSwap}
       className={styles.button}
-      disabled={isDisabled}
+      disabled={isDisabled || loadingTransferTx}
     >
       {!publicKey ? "Connect Wallet" : "Swap & Transfer"}
     </button>
