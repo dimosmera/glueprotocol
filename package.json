@@ -11,6 +11,7 @@
     "prettier": "prettier --write \"./src/**/*.{js,ts,tsx}\""
   },
   "dependencies": {
+    "@bonfida/spl-name-service": "^0.1.67",
     "@solana/spl-token": "^0.1.8",
     "@solana/web3.js": "^1.73.3",
     "@types/node": "18.14.6",
@@ -27,6 +28,7 @@
     "react-window": "^1.8.8",
     "sweetalert2": "^11.7.3",
     "sweetalert2-react-content": "^5.0.7",
+    "tweetnacl": "^1.0.3",
     "typescript": "4.9.5"
   },
   "devDependencies": {

@@ -16,6 +16,7 @@ import getMainnetConnection from "utils/getMainnetConnection";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import isSolToken from "utils/isSolToken";
+import getDestinationPubKey from "utils/getDestinationPubKey";
 
 import styles from "./SwapButton.module.css";
 
@@ -87,7 +88,12 @@ const SwapButton = () => {
         addressLookupTableAccounts: addressLookupTableAccounts,
       });
 
-      const destinationWallet = new PublicKey(destinationAddress);
+      const destinationWallet = await getDestinationPubKey(destinationAddress);
+      if (destinationWallet === null) {
+        console.log("destinationWallet is null error");
+        // TODO:
+        return;
+      }
 
       if (isSolToken(outputToken.address)) {
         message.instructions.push(
