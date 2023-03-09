@@ -6,6 +6,7 @@ import {
 import {
   AddressLookupTableAccount,
   PublicKey,
+  SystemProgram,
   TransactionMessage,
   VersionedTransaction,
 } from "@solana/web3.js";
@@ -14,6 +15,7 @@ import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import getMainnetConnection from "utils/getMainnetConnection";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
+import isSolToken from "utils/isSolToken";
 
 import styles from "./SwapButton.module.css";
 
@@ -85,57 +87,67 @@ const SwapButton = () => {
         addressLookupTableAccounts: addressLookupTableAccounts,
       });
 
-      const TOKEN_MINT = new PublicKey(outputToken.address);
-
       const destinationWallet = new PublicKey(destinationAddress);
 
-      const initiatorTokenAccount = await Token.getAssociatedTokenAddress(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        TOKEN_MINT,
-        publicKey
-      );
-
-      const recipientTokenAccount = await Token.getAssociatedTokenAddress(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        TOKEN_MINT,
-        destinationWallet
-      );
-
-      const recipientAccountInfo = await connection.getAccountInfo(
-        recipientTokenAccount
-      );
-
-      // Create token account for receiver if it does not exist
-      if (recipientAccountInfo === null) {
+      if (isSolToken(outputToken.address)) {
         message.instructions.push(
-          Token.createAssociatedTokenAccountInstruction(
-            ASSOCIATED_TOKEN_PROGRAM_ID,
+          SystemProgram.transfer({
+            fromPubkey: publicKey,
+            toPubkey: destinationWallet,
+            lamports: transferAmount,
+          })
+        );
+      } else {
+        const TOKEN_MINT = new PublicKey(outputToken.address);
+
+        const initiatorTokenAccount = await Token.getAssociatedTokenAddress(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          TOKEN_MINT,
+          publicKey
+        );
+
+        const recipientTokenAccount = await Token.getAssociatedTokenAddress(
+          ASSOCIATED_TOKEN_PROGRAM_ID,
+          TOKEN_PROGRAM_ID,
+          TOKEN_MINT,
+          destinationWallet
+        );
+
+        const recipientAccountInfo = await connection.getAccountInfo(
+          recipientTokenAccount
+        );
+
+        // Create token account for receiver if it does not exist
+        if (recipientAccountInfo === null) {
+          message.instructions.push(
+            Token.createAssociatedTokenAccountInstruction(
+              ASSOCIATED_TOKEN_PROGRAM_ID,
+              TOKEN_PROGRAM_ID,
+              TOKEN_MINT,
+              recipientTokenAccount,
+              // owner
+              destinationWallet,
+              // fee payer
+              publicKey
+            )
+          );
+        }
+
+        message.instructions.push(
+          Token.createTransferInstruction(
             TOKEN_PROGRAM_ID,
-            TOKEN_MINT,
+            // source
+            initiatorTokenAccount,
+            // destination
             recipientTokenAccount,
             // owner
-            destinationWallet,
-            // fee payer
-            publicKey
+            publicKey,
+            [],
+            transferAmount
           )
         );
       }
-
-      message.instructions.push(
-        Token.createTransferInstruction(
-          TOKEN_PROGRAM_ID,
-          // source
-          initiatorTokenAccount,
-          // destination
-          recipientTokenAccount,
-          // owner
-          publicKey,
-          [],
-          transferAmount
-        )
-      );
 
       // compile the message and update the transaction
       transaction.message = message.compileToV0Message(
