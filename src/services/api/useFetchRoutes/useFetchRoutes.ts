@@ -21,7 +21,7 @@ interface Body {
  * For <ExactOut> <amount> should be <outputMint>: How much should the receiver get of their token of choice?
  * ---,---
  * For <ExactIn> you need to pass <outAmount> to the transfer ix
- * For <ExactOut> you need to pass <inAmount>
+ * For <ExactOut> you also need to pass <outAmount>!
  */
 const useFetchRoutes = () => {
   return useMutation(

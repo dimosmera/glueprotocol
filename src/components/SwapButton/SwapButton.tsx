@@ -12,30 +12,16 @@ import {
 
 import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import getMainnetConnection from "utils/getMainnetConnection";
-import useFetchRoutes from "services/api/useFetchRoutes";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
+import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 
-const Swap = () => {
+const SwapButton = () => {
   const { publicKey, signAndSendTransaction, detectPhantom, connect } =
     useGetPhantomContext();
 
-  // input
-  const mSOL_ADDRESS = "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So";
-  // output
-  const SAMO_ADDRESS = "7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU";
+  const { inputs } = useUserInputs();
 
-  const { mutateAsync: fetchSwapTransactions } = useFetchSwapTransaction();
-
-  const inputTokenAmount = 0.005 * Math.pow(10, 9);
-
-  // has to be called just before they hit send
-  const { data, isError, isLoading } = useFetchRoutes(
-    mSOL_ADDRESS,
-    SAMO_ADDRESS,
-    inputTokenAmount
-  );
-  console.log("isLoading: ", isLoading);
-  console.log("data: ", data);
+  const { mutateAsync: fetchSwapTransaction } = useFetchSwapTransaction();
 
   const handleSwap = async () => {
     if (!publicKey) {
@@ -54,22 +40,22 @@ const Swap = () => {
       return;
     }
 
-    if (!data) return;
+    const { swapTransactionInputs, destinationAddress, tokens } = inputs;
+    const outputToken = tokens.output;
 
-    const { routes } = data;
-    if (!routes || routes.length <= 0) {
-      console.log("No routes found");
+    if (
+      !swapTransactionInputs ||
+      !destinationAddress ||
+      destinationAddress === ""
+    )
       return;
-    }
 
-    // By default select the 1st and cheapest route
-    const route = routes[0];
-    const { outAmount } = route;
+    const { route, amount: transferAmount } = swapTransactionInputs;
 
     try {
       const connection = getMainnetConnection();
 
-      const result = await fetchSwapTransactions({
+      const result = await fetchSwapTransaction({
         route,
       });
       const { swapTransaction } = result.data;
@@ -97,40 +83,36 @@ const Swap = () => {
         addressLookupTableAccounts: addressLookupTableAccounts,
       });
 
-      const SAMO_MINT = new PublicKey(SAMO_ADDRESS);
+      const TOKEN_MINT = new PublicKey(outputToken.address);
 
-      const destinationWallet = new PublicKey(
-        "7mMpGVExvzzdyv17Fnoq8DiWU5EKwec7yfee4Dp4hbVU"
-      );
+      const destinationWallet = new PublicKey(destinationAddress);
 
-      const userDestinationTokenAccount = await Token.getAssociatedTokenAddress(
+      const initiatorTokenAccount = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
-        SAMO_MINT,
+        TOKEN_MINT,
         publicKey
       );
 
-      const merchantTokenAccount = await Token.getAssociatedTokenAddress(
+      const recipientTokenAccount = await Token.getAssociatedTokenAddress(
         ASSOCIATED_TOKEN_PROGRAM_ID,
         TOKEN_PROGRAM_ID,
-        SAMO_MINT,
+        TOKEN_MINT,
         destinationWallet
       );
 
-      const receiverAccount = await connection.getAccountInfo(
-        merchantTokenAccount
+      const recipientAccountInfo = await connection.getAccountInfo(
+        recipientTokenAccount
       );
 
-      console.log("receiverAccount: ", receiverAccount);
-
       // Create token account for receiver if it does not exist
-      if (receiverAccount === null) {
+      if (recipientAccountInfo === null) {
         message.instructions.push(
           Token.createAssociatedTokenAccountInstruction(
             ASSOCIATED_TOKEN_PROGRAM_ID,
             TOKEN_PROGRAM_ID,
-            SAMO_MINT,
-            merchantTokenAccount,
+            TOKEN_MINT,
+            recipientTokenAccount,
             // owner
             destinationWallet,
             // fee payer
@@ -139,31 +121,17 @@ const Swap = () => {
         );
       }
 
-      // Transfer slightly less than the output amount to account for slippage
-      const outAmountNumber = parseFloat(outAmount);
-      const slippageBps = 100;
-      const transferAmountAfterSlippage =
-        (outAmountNumber * (10000 - slippageBps)) / 10000;
-      // it could also be outAmountNumber * (1 - slippageBps * 0.0001);
-      // They have the same result which is outAmountNumber * 0.99
-
-      console.log("transferAmountAfterSlippage: ", transferAmountAfterSlippage);
-      console.log(
-        "typeof   transferAmountAfterSlippage: ",
-        typeof transferAmountAfterSlippage
-      );
-
       message.instructions.push(
         Token.createTransferInstruction(
           TOKEN_PROGRAM_ID,
           // source
-          userDestinationTokenAccount,
+          initiatorTokenAccount,
           // destination
-          merchantTokenAccount,
+          recipientTokenAccount,
           // owner
           publicKey,
           [],
-          transferAmountAfterSlippage
+          transferAmount
         )
       );
 
@@ -171,8 +139,6 @@ const Swap = () => {
       transaction.message = message.compileToV0Message(
         addressLookupTableAccounts
       );
-
-      console.log("ready");
 
       const signature = await signAndSendTransaction(transaction);
       console.log("signature: ", signature);
@@ -188,4 +154,4 @@ const Swap = () => {
   );
 };
 
-export default Swap;
+export default SwapButton;

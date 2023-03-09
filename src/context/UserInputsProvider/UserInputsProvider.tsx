@@ -43,7 +43,8 @@ const UserInputsProvider = ({ children }: Props) => {
       input: "",
       output: "",
     },
-    destinationAddress: "",
+    destinationAddress: "7mMpGVExvzzdyv17Fnoq8DiWU5EKwec7yfee4Dp4hbVU",
+    swapTransactionInputs: undefined,
   });
 
   return (

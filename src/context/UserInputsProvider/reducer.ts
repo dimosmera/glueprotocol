@@ -1,4 +1,5 @@
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
+import { SwapRoute } from "types";
 
 type LastChanged = "input" | "output" | undefined;
 
@@ -13,6 +14,15 @@ export interface Inputs {
     output: string;
   };
   destinationAddress: string;
+  /**
+   * Can be either ExactIn or ExactOut
+   */
+  swapTransactionInputs:
+    | {
+        route: SwapRoute;
+        amount: number;
+      }
+    | undefined;
 }
 
 export enum ActionTypes {
@@ -36,11 +46,13 @@ export type Action =
       type: ActionTypes.SET_INPUT_AMOUNT;
       inputAmount: string;
       lastChanged?: LastChanged;
+      swapTransactionInputs?: { route: SwapRoute; amount: number };
     }
   | {
       type: ActionTypes.SET_OUTPUT_AMOUNT;
       outputAmount: string;
       lastChanged?: LastChanged;
+      swapTransactionInputs?: { route: SwapRoute; amount: number };
     }
   | { type: ActionTypes.SET_DESTINATION_ADDRESS; destinationAddress: string };
 
@@ -63,12 +75,16 @@ export const reducer = (state: Inputs, action: Action): Inputs => {
         ...state,
         lastChanged: action.lastChanged || state.lastChanged,
         amounts: { ...state.amounts, input: action.inputAmount },
+        swapTransactionInputs:
+          action.swapTransactionInputs || state.swapTransactionInputs,
       };
     case ActionTypes.SET_OUTPUT_AMOUNT:
       return {
         ...state,
         lastChanged: action.lastChanged || state.lastChanged,
         amounts: { ...state.amounts, output: action.outputAmount },
+        swapTransactionInputs:
+          action.swapTransactionInputs || state.swapTransactionInputs,
       };
     case ActionTypes.SET_DESTINATION_ADDRESS:
       return { ...state, destinationAddress: action.destinationAddress };

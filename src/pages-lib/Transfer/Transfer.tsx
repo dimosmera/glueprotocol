@@ -1,5 +1,6 @@
 import AmountInput from "components/AmountInput";
 import RecipientInput from "components/RecipientInput";
+import SwapButton from "components/SwapButton";
 
 import styles from "./Transfer.module.css";
 
@@ -11,6 +12,8 @@ const Transfer = () => {
       <AmountInput title="Recipient receives" type="output" />
 
       <RecipientInput />
+
+      <SwapButton />
     </div>
   );
 };

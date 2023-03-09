@@ -39,11 +39,13 @@ const useRoutes = () => {
         });
 
         const { data: routes } = result.data;
-        const { outAmount } = getFirstRoute(routes);
+        const route = getFirstRoute(routes);
+        const { outAmount } = route;
 
         dispatch({
           type: ActionTypes.SET_OUTPUT_AMOUNT,
           outputAmount: getAmountToDispatch(output.decimals, outAmount),
+          swapTransactionInputs: { route, amount: parseFloat(outAmount) },
         });
       } catch (error) {
         console.error(error);
@@ -62,11 +64,13 @@ const useRoutes = () => {
       });
 
       const { data: routes } = result.data;
-      const { inAmount } = getFirstRoute(routes);
+      const route = getFirstRoute(routes);
+      const { inAmount, outAmount } = route;
 
       dispatch({
         type: ActionTypes.SET_INPUT_AMOUNT,
         inputAmount: getAmountToDispatch(input.decimals, inAmount),
+        swapTransactionInputs: { route, amount: parseFloat(outAmount) },
       });
     } catch (error) {
       console.error(error);
