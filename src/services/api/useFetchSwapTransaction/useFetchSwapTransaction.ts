@@ -1,9 +1,8 @@
 import { useMutation } from "react-query";
 
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
-
+import { SwapRoute } from "types";
 import http from "services/api/config/http";
-import { SwapRoute } from "services/api/useFetchRoutes/useFetchRoutes";
+import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 
 interface Body {
   route: SwapRoute;
