@@ -3,6 +3,7 @@ import { useState } from "react";
 import { TokenType } from "types";
 import classList from "utils/classList";
 import TokenSelect from "components/TokenSelect";
+import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 
 import Input from "./Input";
 import styles from "./AmountInput.module.css";
@@ -15,6 +16,9 @@ interface Props {
 const AmountInput = ({ title, type }: Props) => {
   const [focused, setFocused] = useState(false);
 
+  const { inputs } = useUserInputs();
+  const { lastChanged } = inputs;
+
   const handleFocus = () => {
     setFocused(true);
   };
@@ -25,7 +29,10 @@ const AmountInput = ({ title, type }: Props) => {
 
   return (
     <div className={`flexbox ${styles.container}`}>
-      <p className={styles["explanation-text"]}>{title}</p>
+      <p className={styles["explanation-text"]}>
+        {title}
+        <b>{lastChanged === type ? " exactly" : ""}</b>
+      </p>
 
       <div
         className={classList([
