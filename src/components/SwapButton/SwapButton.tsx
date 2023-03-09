@@ -17,6 +17,7 @@ import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import isSolToken from "utils/isSolToken";
 import getDestinationPubKey from "utils/getDestinationPubKey";
+import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 
 import styles from "./SwapButton.module.css";
 
@@ -160,8 +161,8 @@ const SwapButton = () => {
         addressLookupTableAccounts
       );
 
-      const signature = await signAndSendTransaction(transaction);
-      console.log("signature: ", signature);
+      const txResult = await signAndSendTransaction(transaction);
+      fireSuccessAlert(txResult.signature);
     } catch (error) {
       console.error(error);
     }

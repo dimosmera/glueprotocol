@@ -1,0 +1,13 @@
+.container {
+  justify-content: space-between;
+  color: var(--black);
+}
+
+.verify-container {
+  text-decoration: none;
+}
+
+.verify-text {
+  justify-content: space-between;
+  color: var(--cornflower-blue);
+}
