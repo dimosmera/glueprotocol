@@ -13,7 +13,7 @@ interface Props {
   type: TokenType;
 }
 
-const MAX_AMOUNT = 100_000_000_000;
+const MAX_AMOUNT = 100_000_000_000_000;
 
 const Input = ({ onFocus, onBlur, type }: Props) => {
   const { inputs, dispatch } = useUserInputs();
