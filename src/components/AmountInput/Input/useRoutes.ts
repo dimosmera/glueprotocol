@@ -1,10 +1,11 @@
-import { debounce } from "throttle-debounce";
+import { useEffect } from "react";
 
 import useFetchRoutes from "services/api/useFetchRoutes";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import { SwapRoute, TokenType } from "types";
 import { ActionTypes } from "context/UserInputsProvider/reducer";
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
+import useDebouncedValue from "utils/useDebouncedValue";
 
 /**
  * By default select the 1st and cheapest route
@@ -22,60 +23,81 @@ const useRoutes = () => {
 
   const { inputs, dispatch } = useUserInputs();
 
-  const { tokens: stateTokens } = inputs;
+  const { tokens: stateTokens, amounts, lastChanged } = inputs;
 
-  const fireRequestForRoutes = debounce(
-    1000,
-    async (type: TokenType, value: string) => {
-      const { input, output } = stateTokens;
+  const fireRequestForRoutes = async (type: TokenType, value: string) => {
+    const { input, output } = stateTokens;
 
-      if (type === "input") {
-        try {
-          const result = await fetchRoutes({
-            swapMode: "ExactIn",
-            slippageBps: 100,
-            inputMint: input.address,
-            outputMint: output.address,
-            amount: getAmountForRoutes(input.decimals, value),
-          });
-
-          const { data: routes } = result.data;
-          const { outAmount } = getFirstRoute(routes);
-
-          dispatch({
-            type: ActionTypes.SET_OUTPUT_AMOUNT,
-            outputAmount: getAmountToDispatch(output.decimals, outAmount),
-          });
-        } catch (error) {
-          console.error(error);
-        }
-
-        return;
-      }
-
+    if (type === "input") {
       try {
         const result = await fetchRoutes({
-          swapMode: "ExactOut",
-          slippageBps: 1,
+          swapMode: "ExactIn",
+          slippageBps: 100,
           inputMint: input.address,
           outputMint: output.address,
-          amount: getAmountForRoutes(output.decimals, value),
+          amount: getAmountForRoutes(input.decimals, value),
         });
 
         const { data: routes } = result.data;
-        const { inAmount } = getFirstRoute(routes);
+        const { outAmount } = getFirstRoute(routes);
 
         dispatch({
-          type: ActionTypes.SET_INPUT_AMOUNT,
-          inputAmount: getAmountToDispatch(input.decimals, inAmount),
+          type: ActionTypes.SET_OUTPUT_AMOUNT,
+          outputAmount: getAmountToDispatch(output.decimals, outAmount),
         });
       } catch (error) {
         console.error(error);
       }
-    }
-  );
 
-  return { fireRequestForRoutes };
+      return;
+    }
+
+    try {
+      const result = await fetchRoutes({
+        swapMode: "ExactOut",
+        slippageBps: 1,
+        inputMint: input.address,
+        outputMint: output.address,
+        amount: getAmountForRoutes(output.decimals, value),
+      });
+
+      const { data: routes } = result.data;
+      const { inAmount } = getFirstRoute(routes);
+
+      dispatch({
+        type: ActionTypes.SET_INPUT_AMOUNT,
+        inputAmount: getAmountToDispatch(input.decimals, inAmount),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const debouncedInputAmount = useDebouncedValue(amounts.input, 500);
+  useEffect(() => {
+    if (
+      !debouncedInputAmount ||
+      debouncedInputAmount === "0" ||
+      lastChanged !== "input"
+    )
+      return;
+
+    fireRequestForRoutes("input", debouncedInputAmount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedInputAmount]);
+
+  const debouncedOutputAmount = useDebouncedValue(amounts.output, 500);
+  useEffect(() => {
+    if (
+      !debouncedOutputAmount ||
+      debouncedOutputAmount === "0" ||
+      lastChanged !== "output"
+    )
+      return;
+
+    fireRequestForRoutes("output", debouncedOutputAmount);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedOutputAmount]);
 };
 
 export default useRoutes;

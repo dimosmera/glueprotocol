@@ -20,6 +20,7 @@ interface Props {
  */
 const UserInputsProvider = ({ children }: Props) => {
   const [state, dispatch] = useReducer(reducer, {
+    lastChanged: undefined,
     tokens: {
       input: {
         address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",

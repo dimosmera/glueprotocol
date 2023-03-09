@@ -23,7 +23,7 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
   const { symbol } = stateTokens[type];
   const amount = amounts[type];
 
-  const { fireRequestForRoutes } = useRoutes();
+  useRoutes();
 
   const handleInputChange = (event: React.FormEvent<HTMLInputElement>) => {
     // Remove any non-numeric characters except decimal point
@@ -37,11 +37,8 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
       dispatch({
         type: ActionTypes.SET_INPUT_AMOUNT,
         inputAmount: value,
+        lastChanged: "input",
       });
-
-      if (value && value !== "0") {
-        fireRequestForRoutes("input", value);
-      }
 
       return;
     }
@@ -49,11 +46,8 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
     dispatch({
       type: ActionTypes.SET_OUTPUT_AMOUNT,
       outputAmount: value,
+      lastChanged: "output",
     });
-
-    if (value && value !== "0") {
-      fireRequestForRoutes("output", value);
-    }
   };
 
   return (
