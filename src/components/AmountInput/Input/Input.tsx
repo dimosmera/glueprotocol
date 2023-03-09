@@ -33,6 +33,15 @@ const Input = ({ onFocus, onBlur, type }: Props) => {
       return;
     }
 
+    if (value === "" || value === "0") {
+      dispatch({
+        type: ActionTypes.CLEAR_AMOUNTS,
+        clearValue: value,
+      });
+
+      return;
+    }
+
     if (type === "input") {
       dispatch({
         type: ActionTypes.SET_INPUT_AMOUNT,

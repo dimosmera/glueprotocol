@@ -31,6 +31,7 @@ export enum ActionTypes {
   SET_INPUT_AMOUNT = "SET_INPUT_AMOUNT",
   SET_OUTPUT_AMOUNT = "SET_OUTPUT_AMOUNT",
   SET_DESTINATION_ADDRESS = "SET_DESTINATION_ADDRESS",
+  CLEAR_AMOUNTS = "CLEAR_AMOUNTS",
 }
 
 export type Action =
@@ -53,6 +54,11 @@ export type Action =
       outputAmount: string;
       lastChanged?: LastChanged;
       swapTransactionInputs?: { route: SwapRoute; amount: number };
+    }
+  | {
+      type: ActionTypes.CLEAR_AMOUNTS;
+      // Will either be "" or "0"
+      clearValue: string;
     }
   | { type: ActionTypes.SET_DESTINATION_ADDRESS; destinationAddress: string };
 
@@ -85,6 +91,13 @@ export const reducer = (state: Inputs, action: Action): Inputs => {
         amounts: { ...state.amounts, output: action.outputAmount },
         swapTransactionInputs:
           action.swapTransactionInputs || state.swapTransactionInputs,
+      };
+    case ActionTypes.CLEAR_AMOUNTS:
+      return {
+        ...state,
+        lastChanged: undefined,
+        amounts: { input: action.clearValue, output: action.clearValue },
+        swapTransactionInputs: undefined,
       };
     case ActionTypes.SET_DESTINATION_ADDRESS:
       return { ...state, destinationAddress: action.destinationAddress };
