@@ -10,7 +10,7 @@ const getErrorBodyText = (errorType: InputError["type"]) => {
     case "ExactInLiquidity":
       return "Try a different asset pair or amount";
     case "ExactOutLiquidity":
-      return 'Try a different amount or start with the "You send" box';
+      return 'Try a different asset pair or start with the "You send" box';
     default:
       return "Something is wrong. Please try again or reach out";
   }
