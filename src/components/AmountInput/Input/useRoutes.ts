@@ -6,6 +6,7 @@ import { SwapRoute, TokenType } from "types";
 import { ActionTypes } from "context/UserInputsProvider/reducer";
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 import useDebouncedValue from "utils/useDebouncedValue";
+import includePlatformFee from "utils/includePlatformFee";
 
 /**
  * By default select the 1st and cheapest route
@@ -28,6 +29,12 @@ const useRoutes = () => {
   const fireRequestForRoutes = async (type: TokenType, value: string) => {
     const { input, output } = stateTokens;
 
+    const { includeFee, platformFee } = await includePlatformFee(
+      type,
+      input,
+      output
+    );
+
     if (type === "input") {
       try {
         const result = await fetchRoutes({
@@ -36,6 +43,7 @@ const useRoutes = () => {
           inputMint: input.address,
           outputMint: output.address,
           amount: getAmountForRoutes(input.decimals, value),
+          platformFee: includeFee ? platformFee : undefined,
         });
 
         const { data: routes } = result.data;
@@ -61,6 +69,7 @@ const useRoutes = () => {
         inputMint: input.address,
         outputMint: output.address,
         amount: getAmountForRoutes(output.decimals, value),
+        platformFee: includeFee ? platformFee : undefined,
       });
 
       const { data: routes } = result.data;

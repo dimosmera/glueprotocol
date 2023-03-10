@@ -20,6 +20,7 @@ import isSolToken from "utils/isSolToken";
 import getDestinationPubKey from "utils/getDestinationPubKey";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
+import includePlatformFee from "utils/includePlatformFee";
 
 import styles from "./SwapButton.module.css";
 
@@ -32,7 +33,8 @@ const SwapButton = () => {
   const [loadingTransferTx, setLoadingTransferTx] = useState(false);
 
   const { inputs } = useUserInputs();
-  const { swapTransactionInputs, destinationAddress, tokens } = inputs;
+  const { swapTransactionInputs, destinationAddress, tokens, lastChanged } =
+    inputs;
 
   const isDisabled =
     publicKey &&
@@ -57,6 +59,7 @@ const SwapButton = () => {
       return;
     }
 
+    const inputToken = tokens.input;
     const outputToken = tokens.output;
 
     if (isDisabled || loadingTransferTx) return;
@@ -70,8 +73,15 @@ const SwapButton = () => {
     try {
       const connection = getMainnetConnection();
 
+      const { includeFee, platformFeeAccount } = await includePlatformFee(
+        lastChanged,
+        inputToken,
+        outputToken
+      );
+
       const result = await fetchSwapTransaction({
         route,
+        feeAccount: includeFee ? platformFeeAccount : undefined,
       });
       const { swapTransaction } = result.data;
 
@@ -172,7 +182,6 @@ const SwapButton = () => {
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
     } catch (error: any) {
-      console.log('error: ', error);
       console.error(error);
 
       if (error && error.code === 4001) {

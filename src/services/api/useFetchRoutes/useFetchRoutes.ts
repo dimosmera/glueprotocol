@@ -13,6 +13,11 @@ interface Body {
    * For ExactOut, keep this low to ensure you get at least the amount specified
    */
   slippageBps: number;
+  /**
+   * Collected in the output token for <ExactIn> and input token for <ExactOut>
+   * In basis points
+   */
+  platformFee?: number;
 }
 
 /**
@@ -25,9 +30,16 @@ interface Body {
  */
 const useFetchRoutes = () => {
   return useMutation(
-    async ({ swapMode, inputMint, outputMint, amount, slippageBps }: Body) =>
+    async ({
+      swapMode,
+      inputMint,
+      outputMint,
+      amount,
+      slippageBps,
+      platformFee = 0,
+    }: Body) =>
       http().get(
-        `https://quote-api.jup.ag/v4/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&swapMode=${swapMode}`
+        `https://quote-api.jup.ag/v4/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=${slippageBps}&swapMode=${swapMode}&feeBps=${platformFee}`
       )
   );
 };

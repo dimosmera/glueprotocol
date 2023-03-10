@@ -1,7 +1,7 @@
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 import { SwapRoute } from "types";
 
-type LastChanged = "input" | "output" | undefined;
+export type LastChanged = "input" | "output" | undefined;
 
 export interface Inputs {
   lastChanged: LastChanged;
