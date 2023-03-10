@@ -1,10 +1,11 @@
 .container {
   border: 1px solid var(--fiord);
+  border-radius: 8px;
+
   cursor: pointer;
   height: 40px;
   margin: 0px 8px 0px 12px;
   padding: 0px 12px;
-  border-radius: 8px;
 }
 
 .token-symbol {

@@ -3,7 +3,11 @@ import { useEffect } from "react";
 import useFetchRoutes from "services/api/useFetchRoutes";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import { SwapRoute, TokenType } from "types";
-import { ActionTypes } from "context/UserInputsProvider/reducer";
+import {
+  ActionTypes,
+  Dispatch,
+  InputError,
+} from "context/UserInputsProvider/reducer";
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 import useDebouncedValue from "utils/useDebouncedValue";
 import includePlatformFee from "utils/includePlatformFee";
@@ -19,12 +23,38 @@ const getAmountToDispatch = (decimals: IToken["decimals"], amount: string) =>
 const getAmountForRoutes = (decimals: IToken["decimals"], amount: string) =>
   Math.round(parseFloat(amount) * Math.pow(10, decimals));
 
+const dealWithLiquidityErrors = (
+  routes: SwapRoute[],
+  errorFromState: InputError | undefined,
+  errorType: InputError["type"],
+  dispatch: Dispatch
+) => {
+  if (!routes || routes.length === 0) {
+    dispatch({
+      type: ActionTypes.SET_ERROR,
+      error: { type: errorType, message: "No liquidity on this asset pair" },
+    });
+
+    return "ErrorSet";
+  }
+
+  if (
+    errorFromState &&
+    (errorFromState.type === "ExactOutLiquidity" ||
+      errorFromState.type === "ExactInLiquidity")
+  ) {
+    dispatch({ type: ActionTypes.CLEAR_ERRORS });
+
+    return "ErrorClear";
+  }
+};
+
 const useRoutes = () => {
   const { mutateAsync: fetchRoutes } = useFetchRoutes();
 
   const { inputs, dispatch } = useUserInputs();
 
-  const { tokens: stateTokens, amounts, lastChanged } = inputs;
+  const { tokens: stateTokens, amounts, lastChanged, error } = inputs;
 
   const fireRequestForRoutes = async (type: TokenType, value: string) => {
     const { input, output } = stateTokens;
@@ -47,6 +77,15 @@ const useRoutes = () => {
         });
 
         const { data: routes } = result.data;
+
+        const errorAction = dealWithLiquidityErrors(
+          routes,
+          error,
+          "ExactInLiquidity",
+          dispatch
+        );
+        if (errorAction === "ErrorSet") return;
+
         const route = getFirstRoute(routes);
         const { outAmount } = route;
 
@@ -73,6 +112,15 @@ const useRoutes = () => {
       });
 
       const { data: routes } = result.data;
+
+      const errorAction = dealWithLiquidityErrors(
+        routes,
+        error,
+        "ExactOutLiquidity",
+        dispatch
+      );
+      if (errorAction === "ErrorSet") return;
+
       const route = getFirstRoute(routes);
       const { inAmount, outAmount } = route;
 

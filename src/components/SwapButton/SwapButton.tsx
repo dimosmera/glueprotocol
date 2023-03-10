@@ -33,14 +33,20 @@ const SwapButton = () => {
   const [loadingTransferTx, setLoadingTransferTx] = useState(false);
 
   const { inputs } = useUserInputs();
-  const { swapTransactionInputs, destinationAddress, tokens, lastChanged } =
-    inputs;
+  const {
+    swapTransactionInputs,
+    destinationAddress,
+    tokens,
+    lastChanged,
+    error,
+  } = inputs;
 
   const isDisabled =
     publicKey &&
     (!swapTransactionInputs ||
       !destinationAddress ||
-      destinationAddress === "");
+      destinationAddress === "" ||
+      error !== undefined);
 
   const handleSwap = async () => {
     if (!publicKey) {

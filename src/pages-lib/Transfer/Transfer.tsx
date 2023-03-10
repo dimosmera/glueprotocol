@@ -1,4 +1,5 @@
 import AmountInput from "components/AmountInput";
+import ErrorBox from "components/ErrorBox";
 import RecipientInput from "components/RecipientInput";
 import SwapButton from "components/SwapButton";
 
@@ -14,6 +15,8 @@ const Transfer = () => {
       <RecipientInput />
 
       <SwapButton />
+
+      <ErrorBox />
     </div>
   );
 };

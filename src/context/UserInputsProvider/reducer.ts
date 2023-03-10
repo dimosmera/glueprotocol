@@ -3,6 +3,11 @@ import { SwapRoute } from "types";
 
 export type LastChanged = "input" | "output" | undefined;
 
+export interface InputError {
+  type: "General" | "ExactInLiquidity" | "ExactOutLiquidity";
+  message: string;
+}
+
 export interface Inputs {
   lastChanged: LastChanged;
   tokens: {
@@ -23,6 +28,7 @@ export interface Inputs {
         amount: number;
       }
     | undefined;
+  error: InputError | undefined;
 }
 
 export enum ActionTypes {
@@ -31,6 +37,8 @@ export enum ActionTypes {
   SET_INPUT_AMOUNT = "SET_INPUT_AMOUNT",
   SET_OUTPUT_AMOUNT = "SET_OUTPUT_AMOUNT",
   SET_DESTINATION_ADDRESS = "SET_DESTINATION_ADDRESS",
+  SET_ERROR = "SET_ERROR",
+  CLEAR_ERRORS = "CLEAR_ERRORS",
   CLEAR_AMOUNTS = "CLEAR_AMOUNTS",
 }
 
@@ -59,6 +67,13 @@ export type Action =
       type: ActionTypes.CLEAR_AMOUNTS;
       // Will either be "" or "0"
       clearValue: string;
+    }
+  | {
+      type: ActionTypes.SET_ERROR;
+      error: InputError;
+    }
+  | {
+      type: ActionTypes.CLEAR_ERRORS;
     }
   | { type: ActionTypes.SET_DESTINATION_ADDRESS; destinationAddress: string };
 
@@ -101,6 +116,11 @@ export const reducer = (state: Inputs, action: Action): Inputs => {
       };
     case ActionTypes.SET_DESTINATION_ADDRESS:
       return { ...state, destinationAddress: action.destinationAddress };
+    case ActionTypes.CLEAR_ERRORS:
+      return { ...state, error: undefined };
+    case ActionTypes.SET_ERROR:
+      return { ...state, error: action.error };
+
     default:
       return state;
   }
