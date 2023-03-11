@@ -5,6 +5,7 @@ import {
   SolanaMobileWalletAdapterProtocolErrorCode,
 } from "@solana-mobile/mobile-wallet-adapter-protocol";
 import bs58 from "bs58";
+import { PublicKey } from "@solana/web3.js";
 
 import isiOS from "utils/isiOS";
 import isAndroid from "utils/isAndroid";
@@ -49,10 +50,10 @@ const AppHeader = () => {
               },
             });
 
-            console.log('authToken: ', authToken);
+            console.log("authToken: ", authToken);
 
             const bufferData = Buffer.from(accounts[0].address, "base64");
-            const publicKey = bs58.encode(bufferData);
+            const publicKey = new PublicKey(bs58.encode(bufferData));
             handleSuccessfulConnection({ publicKey });
             console.log("publicKey: ", publicKey);
           });
