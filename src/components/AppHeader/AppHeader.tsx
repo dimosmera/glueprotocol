@@ -16,8 +16,13 @@ import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import styles from "./AppHeader.module.css";
 
 const AppHeader = () => {
-  const { publicKey, detectPhantom, connect, disconnect } =
-    useGetPhantomContext();
+  const {
+    publicKey,
+    detectPhantom,
+    connect,
+    disconnect,
+    handleSuccessfulConnection,
+  } = useGetPhantomContext();
 
   const handleConnect = async () => {
     if (publicKey) {
@@ -35,7 +40,7 @@ const AppHeader = () => {
       if (isAndroid()) {
         try {
           await transact(async (wallet) => {
-            const { accounts } = await wallet.authorize({
+            const { accounts, auth_token: authToken } = await wallet.authorize({
               cluster: "mainnet-beta",
               identity: {
                 uri: "https://www.glueprotocol.com/",
@@ -44,8 +49,11 @@ const AppHeader = () => {
               },
             });
 
+            console.log('authToken: ', authToken);
+
             const bufferData = Buffer.from(accounts[0].address, "base64");
             const publicKey = bs58.encode(bufferData);
+            handleSuccessfulConnection({ publicKey });
             console.log("publicKey: ", publicKey);
           });
         } catch (error: any) {

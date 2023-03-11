@@ -11,6 +11,11 @@ import {
   TransactionMessage,
   VersionedTransaction,
 } from "@solana/web3.js";
+import {
+  transact,
+  SolanaMobileWalletAdapterProtocolErrorCode,
+} from "@solana-mobile/mobile-wallet-adapter-protocol";
+import bs58 from "bs58";
 
 import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import getMainnetConnection from "utils/getMainnetConnection";
@@ -21,6 +26,7 @@ import getDestinationPubKey from "utils/getDestinationPubKey";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 import includePlatformFee from "utils/includePlatformFee";
+import isAndroid from "utils/isAndroid";
 
 import styles from "./SwapButton.module.css";
 
@@ -184,6 +190,68 @@ const SwapButton = () => {
       transaction.message = message.compileToV0Message(
         addressLookupTableAccounts
       );
+
+      if (isAndroid()) {
+        try {
+          await transact(async (wallet) => {
+            const { accounts } = await wallet.authorize({
+              cluster: "mainnet-beta",
+              identity: {
+                uri: "https://www.glueprotocol.com/",
+                icon: "/glue-icon.png",
+                name: "Glue Protocol",
+              },
+            });
+
+            const bufferData = Buffer.from(accounts[0].address, "base64");
+            const publicKey = bs58.encode(bufferData);
+            console.log("publicKey: ", publicKey);
+
+            await wallet
+              .signAndSendTransactions({
+                payloads: [transaction.serialize().toString()],
+              })
+              .then((results) => {
+                console.log("results: ", results);
+                window.alert(results);
+                // fireSuccessAlert(txSignature);
+              })
+              .catch((error: any) => {
+                console.error(error);
+
+                if (error) {
+                  if (
+                    error.code ===
+                    SolanaMobileWalletAdapterProtocolErrorCode.ERROR_NOT_SIGNED
+                  ) {
+                    fireErrorAlert("Sign request declined");
+
+                    return;
+                  }
+                }
+
+                fireErrorAlert();
+              });
+          });
+        } catch (error: any) {
+          console.log("error: ", error);
+          console.error(error);
+
+          if (error) {
+            if (
+              error.code ===
+              SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED
+            ) {
+              fireErrorAlert("Connection rejected");
+              return;
+            }
+          }
+
+          fireErrorAlert();
+        }
+
+        return;
+      }
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);

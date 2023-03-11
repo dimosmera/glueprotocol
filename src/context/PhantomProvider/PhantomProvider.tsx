@@ -134,6 +134,7 @@ const PhantomProvider = ({ children }: Props) => {
         disconnect,
         detectPhantom,
         connected: !!phantomContext?.publicKey,
+        handleSuccessfulConnection,
         ...phantomContext,
       }}
     >

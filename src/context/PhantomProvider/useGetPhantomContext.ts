@@ -13,6 +13,7 @@ interface ReturnType {
   connectAsync: () => Promise<{ publicKey: PublicKey }>;
   disconnect: () => void;
   detectPhantom: () => boolean;
+  handleSuccessfulConnection: (response: any) => void;
   publicKey: PublicKey | undefined;
   connected: boolean;
   signMessage: ((message: Uint8Array) => Promise<Uint8Array>) | undefined;
@@ -38,6 +39,7 @@ const useGetPhantomContext = (): ReturnType => {
     connected,
     signMessage,
     signAndSendTransaction,
+    handleSuccessfulConnection,
   } = results;
 
   return {
@@ -49,6 +51,7 @@ const useGetPhantomContext = (): ReturnType => {
     connected,
     signMessage,
     signAndSendTransaction,
+    handleSuccessfulConnection,
   };
 };
 
