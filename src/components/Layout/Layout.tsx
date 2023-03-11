@@ -1,3 +1,4 @@
+import AppFooter from "components/AppFooter";
 import AppHeader from "components/AppHeader";
 import PageHead from "components/PageHead";
 
@@ -13,6 +14,8 @@ const Layout = ({ children }: Props) => {
       <AppHeader />
 
       {children}
+
+      <AppFooter />
     </>
   );
 };

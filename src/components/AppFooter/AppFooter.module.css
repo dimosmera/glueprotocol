@@ -1,0 +1,21 @@
+.container {
+  width: 100%;
+  position: fixed;
+
+  padding: 1rem;
+
+  bottom: 0;
+  z-index: 10; 
+}
+
+.love-text {
+  color: var(--heather);
+  font-size: var(--font-size-sm);
+}
+
+.link-text {
+  composes: love-text;
+  color: var(--cornflower-blue);
+
+  margin-left: 4px;
+}
