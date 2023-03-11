@@ -97,103 +97,6 @@ const SwapButton = () => {
       });
       const { swapTransaction } = result.data;
 
-      // deserialize the transaction
-      const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
-      const transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-
-      const addressLookupTableAccounts = await Promise.all(
-        transaction.message.addressTableLookups.map(async (lookup) => {
-          return new AddressLookupTableAccount({
-            key: lookup.accountKey,
-            state: AddressLookupTableAccount.deserialize(
-              await connection
-                .getAccountInfo(lookup.accountKey)
-                // @ts-ignore
-                .then((res) => res.data)
-            ),
-          });
-        })
-      );
-
-      // decompile transaction message and add transfer instruction
-      const message = TransactionMessage.decompile(transaction.message, {
-        addressLookupTableAccounts: addressLookupTableAccounts,
-      });
-
-      const destinationWallet = await getDestinationPubKey(destinationAddress);
-      if (destinationWallet === null) {
-        fireErrorAlert("Failed. Check the recipient address");
-        return;
-      }
-
-      if (isSolToken(outputToken.address)) {
-        message.instructions.push(
-          SystemProgram.transfer({
-            fromPubkey: publicKey,
-            toPubkey: destinationWallet,
-            lamports: transferAmount,
-          })
-        );
-      } else {
-        const TOKEN_MINT = new PublicKey(outputToken.address);
-
-        const initiatorTokenAccount = await Token.getAssociatedTokenAddress(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          TOKEN_MINT,
-          publicKey
-        );
-
-        const recipientTokenAccount = await Token.getAssociatedTokenAddress(
-          ASSOCIATED_TOKEN_PROGRAM_ID,
-          TOKEN_PROGRAM_ID,
-          TOKEN_MINT,
-          destinationWallet
-        );
-
-        const recipientAccountInfo = await connection.getAccountInfo(
-          recipientTokenAccount
-        );
-
-        // Create token account for receiver if it does not exist
-        if (recipientAccountInfo === null) {
-          message.instructions.push(
-            Token.createAssociatedTokenAccountInstruction(
-              ASSOCIATED_TOKEN_PROGRAM_ID,
-              TOKEN_PROGRAM_ID,
-              TOKEN_MINT,
-              recipientTokenAccount,
-              // owner
-              destinationWallet,
-              // fee payer
-              publicKey
-            )
-          );
-        }
-
-        message.instructions.push(
-          Token.createTransferInstruction(
-            TOKEN_PROGRAM_ID,
-            // source
-            initiatorTokenAccount,
-            // destination
-            recipientTokenAccount,
-            // owner
-            publicKey,
-            [],
-            transferAmount
-          )
-        );
-      }
-
-      console.log("Before transaction.message");
-      console.log('transaction: ', transaction);
-
-      // compile the message and update the transaction
-      transaction.message = message.compileToV0Message(
-        addressLookupTableAccounts
-      );
-
       if (isAndroid()) {
         console.log("It's android. Lets go in");
         try {
@@ -208,8 +111,112 @@ const SwapButton = () => {
             });
 
             const bufferData = Buffer.from(accounts[0].address, "base64");
-            const publicKey = bs58.encode(bufferData);
-            console.log("publicKey: ", publicKey);
+            const publicKeyFromSign = bs58.encode(bufferData);
+            console.log("publicKeyFromSign: ", publicKeyFromSign);
+
+            // deserialize the transaction
+            const swapTransactionBuf = Buffer.from(swapTransaction, "base64");
+            const transaction =
+              VersionedTransaction.deserialize(swapTransactionBuf);
+
+            const addressLookupTableAccounts = await Promise.all(
+              transaction.message.addressTableLookups.map(async (lookup) => {
+                return new AddressLookupTableAccount({
+                  key: lookup.accountKey,
+                  state: AddressLookupTableAccount.deserialize(
+                    await connection
+                      .getAccountInfo(lookup.accountKey)
+                      // @ts-ignore
+                      .then((res) => res.data)
+                  ),
+                });
+              })
+            );
+
+            // decompile transaction message and add transfer instruction
+            const message = TransactionMessage.decompile(transaction.message, {
+              addressLookupTableAccounts: addressLookupTableAccounts,
+            });
+
+            const destinationWallet = await getDestinationPubKey(
+              destinationAddress
+            );
+            if (destinationWallet === null) {
+              fireErrorAlert("Failed. Check the recipient address");
+              return;
+            }
+
+            if (isSolToken(outputToken.address)) {
+              message.instructions.push(
+                SystemProgram.transfer({
+                  fromPubkey: publicKey,
+                  toPubkey: destinationWallet,
+                  lamports: transferAmount,
+                })
+              );
+            } else {
+              const TOKEN_MINT = new PublicKey(outputToken.address);
+
+              const initiatorTokenAccount =
+                await Token.getAssociatedTokenAddress(
+                  ASSOCIATED_TOKEN_PROGRAM_ID,
+                  TOKEN_PROGRAM_ID,
+                  TOKEN_MINT,
+                  publicKey
+                );
+
+              const recipientTokenAccount =
+                await Token.getAssociatedTokenAddress(
+                  ASSOCIATED_TOKEN_PROGRAM_ID,
+                  TOKEN_PROGRAM_ID,
+                  TOKEN_MINT,
+                  destinationWallet
+                );
+
+              const recipientAccountInfo = await connection.getAccountInfo(
+                recipientTokenAccount
+              );
+
+              // Create token account for receiver if it does not exist
+              if (recipientAccountInfo === null) {
+                message.instructions.push(
+                  Token.createAssociatedTokenAccountInstruction(
+                    ASSOCIATED_TOKEN_PROGRAM_ID,
+                    TOKEN_PROGRAM_ID,
+                    TOKEN_MINT,
+                    recipientTokenAccount,
+                    // owner
+                    destinationWallet,
+                    // fee payer
+                    publicKey
+                  )
+                );
+              }
+
+              message.instructions.push(
+                Token.createTransferInstruction(
+                  TOKEN_PROGRAM_ID,
+                  // source
+                  initiatorTokenAccount,
+                  // destination
+                  recipientTokenAccount,
+                  // owner
+                  publicKey,
+                  [],
+                  transferAmount
+                )
+              );
+            }
+
+            console.log("Before transaction.message");
+            console.log("transaction: ", transaction);
+
+            // compile the message and update the transaction
+            transaction.message = message.compileToV0Message(
+              addressLookupTableAccounts
+            );
+
+            console.log("After transaction.message");
 
             await wallet
               .signAndSendTransactions({
@@ -259,8 +266,8 @@ const SwapButton = () => {
 
       console.log("outside of android");
 
-      const txResult = await signAndSendTransaction(transaction);
-      fireSuccessAlert(txResult.signature);
+      // const txResult = await signAndSendTransaction(transaction);
+      // fireSuccessAlert(txResult.signature);
     } catch (error: any) {
       console.error(error);
 
