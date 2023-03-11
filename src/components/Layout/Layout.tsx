@@ -1,3 +1,4 @@
+import AppHeader from "components/AppHeader";
 import PageHead from "components/PageHead";
 
 interface Props {
@@ -8,6 +9,8 @@ const Layout = ({ children }: Props) => {
   return (
     <>
       <PageHead />
+
+      <AppHeader />
 
       {children}
     </>

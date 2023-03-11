@@ -12,8 +12,6 @@ interface Props {
   children: React.ReactNode;
 }
 
-// TODO: Change discord URL
-
 const TokensProvider = ({ children }: Props) => {
   const { data, isError } = useFetchTokens();
 
@@ -23,7 +21,7 @@ const TokensProvider = ({ children }: Props) => {
         <p>
           Something went wrong. Please{" "}
           <a
-            href="https://discord.gg/GKbBazkvN2"
+            href="https://twitter.com/dimos851"
             target="_blank"
             rel="noopener"
             style={{ textDecoration: "underline", color: "#2669F5" }}
