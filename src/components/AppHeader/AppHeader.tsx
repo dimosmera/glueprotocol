@@ -1,8 +1,12 @@
 import NextImage from "next/image";
 import NextLink from "next/link";
+import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
+import bs58 from "bs58";
 
 import displayAddress from "utils/displayAddress";
 import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import isAndroid from "utils/isAndroid";
+import { fireErrorAlert } from "components/SweetAlerts";
 
 import styles from "./AppHeader.module.css";
 
@@ -10,7 +14,7 @@ const AppHeader = () => {
   const { publicKey, detectPhantom, connect, disconnect } =
     useGetPhantomContext();
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     if (publicKey) {
       disconnect();
       return;
@@ -22,6 +26,30 @@ const AppHeader = () => {
       //   openPhantomDeeplink(window.location.href);
       //   return;
       // }
+      if (isAndroid()) {
+        try {
+          await transact(async (wallet) => {
+            const { accounts } = await wallet.authorize({
+              cluster: "mainnet-beta",
+              identity: {
+                uri: "https://www.glueprotocol.com/",
+                icon: "/glue-icon.png",
+                name: "Glue Protocol",
+              },
+            });
+
+            const bufferData = Buffer.from(accounts[0].address, "base64");
+            const publicKey = bs58.encode(bufferData);
+            console.log("publicKey: ", publicKey);
+          });
+        } catch (error) {
+          console.log("error: ", error);
+          console.error(error);
+          fireErrorAlert();
+        }
+
+        return;
+      }
 
       window.open("https://phantom.app/", "_blank");
       return;
