@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 
 import classList from "utils/classList";
@@ -11,6 +11,15 @@ interface Props {
 
 const SearchInput = ({ onInputChange }: Props) => {
   const [focused, setFocused] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Sets the focus on the input when the component is mounted
+  useEffect(() => {
+    if (!inputRef.current) return;
+
+    inputRef.current.focus();
+  }, []);
 
   const handleFocus = () => {
     setFocused(true);
@@ -35,6 +44,7 @@ const SearchInput = ({ onInputChange }: Props) => {
 
       <input
         type="text"
+        ref={inputRef}
         placeholder="Search by token or address"
         className={styles["search-input"]}
         onChange={(e) => onInputChange(e.target.value)}
