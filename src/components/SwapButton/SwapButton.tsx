@@ -218,10 +218,8 @@ const SwapButton = () => {
               .signAndSendTransactions({
                 payloads: [bufferTx.toString("base64")],
               })
-              .then((results) => {
-                console.log("results: ", results);
-                window.alert(results);
-                // fireSuccessAlert(txSignature);
+              .then(({ signatures }) => {
+                fireSuccessAlert(signatures[0]);
               })
               .catch((error: any) => {
                 console.error(error);
