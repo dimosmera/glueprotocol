@@ -186,6 +186,9 @@ const SwapButton = () => {
         );
       }
 
+      console.log("Before transaction.message");
+      console.log('transaction: ', transaction);
+
       // compile the message and update the transaction
       transaction.message = message.compileToV0Message(
         addressLookupTableAccounts
@@ -253,6 +256,8 @@ const SwapButton = () => {
 
         return;
       }
+
+      console.log("outside of android");
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
