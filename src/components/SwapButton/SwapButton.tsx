@@ -192,6 +192,7 @@ const SwapButton = () => {
       );
 
       if (isAndroid()) {
+        console.log("It's android. Lets go in");
         try {
           await transact(async (wallet) => {
             const { accounts } = await wallet.authorize({
