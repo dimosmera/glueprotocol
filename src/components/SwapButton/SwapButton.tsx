@@ -207,9 +207,16 @@ const SwapButton = () => {
             // const publicKey = bs58.encode(bufferData);
             // console.log("publicKey: ", publicKey);
 
+            const serializedVersionedTx = transaction.serialize();
+            const bufferTx = Buffer.from(
+              serializedVersionedTx.buffer,
+              serializedVersionedTx.byteOffset,
+              serializedVersionedTx.byteLength
+            );
+
             await wallet
               .signAndSendTransactions({
-                payloads: [transaction.serialize().toString()],
+                payloads: [bufferTx.toString("base64")],
               })
               .then((results) => {
                 console.log("results: ", results);
