@@ -3,10 +3,12 @@ import NextLink from "next/link";
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
 import bs58 from "bs58";
 
-import displayAddress from "utils/displayAddress";
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import isiOS from "utils/isiOS";
 import isAndroid from "utils/isAndroid";
+import displayAddress from "utils/displayAddress";
+import openPhantomDeeplink from "utils/openPhantomDeeplink";
 import { fireErrorAlert } from "components/SweetAlerts";
+import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 
 import styles from "./AppHeader.module.css";
 
@@ -22,10 +24,11 @@ const AppHeader = () => {
 
     const isPhantomInstalled = detectPhantom();
     if (!isPhantomInstalled) {
-      // if (shouldDeeplink) {
-      //   openPhantomDeeplink(window.location.href);
-      //   return;
-      // }
+      if (isiOS()) {
+        openPhantomDeeplink(window.location.href);
+        return;
+      }
+
       if (isAndroid()) {
         try {
           await transact(async (wallet) => {
