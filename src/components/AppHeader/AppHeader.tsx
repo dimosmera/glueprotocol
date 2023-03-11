@@ -1,6 +1,9 @@
 import NextImage from "next/image";
 import NextLink from "next/link";
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
+import {
+  transact,
+  SolanaMobileWalletAdapterProtocolErrorCode,
+} from "@solana-mobile/mobile-wallet-adapter-protocol";
 import bs58 from "bs58";
 
 import isiOS from "utils/isiOS";
@@ -45,9 +48,20 @@ const AppHeader = () => {
             const publicKey = bs58.encode(bufferData);
             console.log("publicKey: ", publicKey);
           });
-        } catch (error) {
+        } catch (error: any) {
           console.log("error: ", error);
           console.error(error);
+
+          if (error) {
+            if (
+              error.code ===
+              SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED
+            ) {
+              fireErrorAlert("Connection rejected");
+              return;
+            }
+          }
+
           fireErrorAlert();
         }
 
