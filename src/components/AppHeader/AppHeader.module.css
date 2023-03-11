@@ -2,12 +2,29 @@
   width: 100%;
   position: fixed;
 
-  justify-content: flex-end;
+  justify-content: space-between;
 
   padding: 1rem;
 
   top: 0;
   z-index: 10;
+}
+
+.title-container {
+  text-decoration: none;
+}
+
+.app-title {
+  color: var(--white);
+  font-size: var(--font-size-xxl);
+
+  margin-left: .5rem;
+}
+
+@media (max-width: 500px) {
+  .app-title {
+    display: none;
+  }
 }
 
 .connect-button {
