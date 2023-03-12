@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { PublicKey, VersionedTransaction } from "@solana/web3.js";
+import { PublicKey, SendOptions, VersionedTransaction } from "@solana/web3.js";
 
 import { PhantomContext } from "./PhantomProvider";
 
@@ -10,8 +10,9 @@ interface ReturnType {
   publicKey: PublicKey | undefined;
   connected: boolean;
   signAndSendTransaction: (
-    transaction: VersionedTransaction
-  ) => Promise<{ signature: string } | undefined>;
+    transaction: VersionedTransaction,
+    options?: SendOptions | undefined
+  ) => Promise<{ signature: string }>;
 }
 
 const error =

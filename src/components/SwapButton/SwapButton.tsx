@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
@@ -6,6 +7,8 @@ import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 import includePlatformFee from "utils/includePlatformFee";
+import isAndroid from "utils/isAndroid";
+import dealWithMWAErrors from "utils/dealWithMWAErrors";
 
 import prepareSwapTransaction from "./prepareSwapTransaction";
 import styles from "./SwapButton.module.css";
@@ -73,9 +76,49 @@ const SwapButton = () => {
       );
       if (!transaction) return;
 
-      const txResult = await signAndSendTransaction(transaction);
-      if (!txResult) throw Error();
+      if (!detectPhantom()) {
+        if (isAndroid()) {
+          try {
+            await transact(async (wallet) => {
+              const { auth_token: authToken } = await wallet.authorize({
+                cluster: "mainnet-beta",
+                identity: {
+                  uri: "https://www.glueprotocol.com/",
+                  icon: "/glue-icon.png",
+                  name: "Glue Protocol",
+                },
+              });
 
+              // TODO: authToken logic
+              console.log("authToken: ", authToken);
+
+              const serializedVersionedTx = transaction.serialize();
+              const bufferTx = Buffer.from(
+                serializedVersionedTx.buffer,
+                serializedVersionedTx.byteOffset,
+                serializedVersionedTx.byteLength
+              );
+
+              const {
+                signatures: [txSignature],
+              } = await wallet.signAndSendTransactions({
+                payloads: [bufferTx.toString("base64")],
+              });
+
+              fireSuccessAlert(txSignature);
+            });
+          } catch (error: any) {
+            console.log("error: ", error);
+            console.error(error);
+
+            dealWithMWAErrors(error);
+          }
+
+          return;
+        }
+      }
+
+      const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
     } catch (error: any) {
       console.error(error);

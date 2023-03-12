@@ -12,6 +12,7 @@ const dealWithMWAErrors = (error: { code: number } | undefined) => {
   }
 
   console.log("error.code: ", error.code);
+  console.log("typeof error.code: ", typeof error.code);
 
   switch (error.code) {
     case SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED:

@@ -1,6 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import bs58 from "bs58";
-import { PublicKey, VersionedTransaction } from "@solana/web3.js";
+import { PublicKey, SendOptions, VersionedTransaction } from "@solana/web3.js";
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import { fireErrorAlert } from "components/SweetAlerts";
@@ -18,8 +18,9 @@ interface Props {
 interface PhantomContext {
   publicKey: PublicKey;
   signAndSendTransaction: (
-    transaction: VersionedTransaction
-  ) => Promise<{ signature: string } | undefined>;
+    transaction: VersionedTransaction,
+    options?: SendOptions | undefined
+  ) => Promise<{ signature: string }>;
 }
 
 export const getProvider = () => {
@@ -44,60 +45,10 @@ const PhantomProvider = ({ children }: Props) => {
     PhantomContext | undefined
   >(undefined);
 
-  const signAndSendTransaction = async (transaction: VersionedTransaction) => {
-    const phantomProvider = getProvider();
-    if (phantomProvider) {
-      const { signature } = await phantomProvider.signAndSendTransaction(
-        transaction
-      );
-      return { signature };
-    }
-
-    if (!isAndroid()) {
-      throw new Error("At this point it should be on Android");
-    }
-
-    try {
-      await transact(async (wallet) => {
-        const { auth_token: authToken } = await wallet.authorize({
-          cluster: "mainnet-beta",
-          identity: {
-            uri: "https://www.glueprotocol.com/",
-            icon: "/glue-icon.png",
-            name: "Glue Protocol",
-          },
-        });
-
-        // TODO: authToken logic
-        console.log("authToken: ", authToken);
-
-        const serializedVersionedTx = transaction.serialize();
-        const bufferTx = Buffer.from(
-          serializedVersionedTx.buffer,
-          serializedVersionedTx.byteOffset,
-          serializedVersionedTx.byteLength
-        );
-
-        const {
-          signatures: [txSignature],
-        } = await wallet.signAndSendTransactions({
-          payloads: [bufferTx.toString("base64")],
-        });
-
-        return { signature: txSignature };
-      });
-    } catch (error: any) {
-      console.log("error: ", error);
-      console.error(error);
-
-      dealWithMWAErrors(error);
-    }
-  };
-
   const handleSuccessfulConnection = (response: any) => {
     setPhantomContext({
       publicKey: response.publicKey,
-      signAndSendTransaction,
+      signAndSendTransaction: getProvider()?.signAndSendTransaction,
     });
   };
 
