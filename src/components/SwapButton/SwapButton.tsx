@@ -46,7 +46,6 @@ const SwapButton = () => {
       return;
     }
 
-
     const inputToken = tokens.input;
     const outputToken = tokens.output;
 
@@ -80,11 +79,79 @@ const SwapButton = () => {
       );
       if (!transaction) return;
 
-      window.alert(JSON.stringify(outputToken));
-      window.alert(publicKey.toString());
-      window.alert(swapTransaction)
-      window.alert(destinationAddress)
-      window.alert(transferAmount)
+      if (!detectPhantom()) {
+        window.alert("not her");
+        if (isAndroid()) {
+          try {
+            await transact(async (wallet) => {
+              const { auth_token: authToken } = await wallet.authorize({
+                cluster: "mainnet-beta",
+                identity: {
+                  uri: "https://www.glueprotocol.com/",
+                  icon: "/glue-icon.png",
+                  name: "Glue Protocol",
+                },
+              });
+
+              // TODO: authToken logic
+              console.log("authToken: ", authToken);
+
+              const serializedVersionedTx = transaction.serialize();
+              const bufferTx = Buffer.from(
+                serializedVersionedTx.buffer,
+                serializedVersionedTx.byteOffset,
+                serializedVersionedTx.byteLength
+              );
+
+              const {
+                signatures: [txSignature],
+              } = await wallet.signAndSendTransactions({
+                payloads: [bufferTx.toString("base64")],
+              });
+
+              console.log('txSignature: ', txSignature);
+
+              const txBuffer = Buffer.from(txSignature, "base64");
+              const one = txBuffer.toString("ascii");
+              console.log('one: ', one);
+              const two = txBuffer.toString("base64");
+              console.log('two: ', two);
+              const three = txBuffer.toString("base64url");
+              console.log('three: ', three);
+              const four = txBuffer.toString("binary");
+              console.log('four: ', four);
+              const five = txBuffer.toString("hex");
+              console.log('five: ', five);
+              const six = txBuffer.toString("latin1");
+              console.log('six: ', six);
+              const seen = txBuffer.toString("ucs-2");
+              console.log('seen: ', seen);
+              const eig = txBuffer.toString("ucs2");
+              console.log('eig: ', eig);
+              const nine = txBuffer.toString("utf-8");
+              console.log('nine: ', nine);
+              const ten = txBuffer.toString("utf16le");
+              console.log('ten: ', ten);
+              const ele = txBuffer.toString("utf8");
+              console.log('ele: ', ele);
+              const twi = txBuffer.toString();
+              console.log('twi: ', twi);
+
+              fireSuccessAlert(txSignature);
+            });
+          } catch (error: any) {
+            console.log("error: ", error);
+            console.error(error);
+
+            dealWithMWAErrors(error);
+          }
+
+          return;
+        }
+      }
+
+      window.alert("here");
+      window.alert(signAndSendTransaction);
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
