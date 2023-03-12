@@ -46,7 +46,6 @@ const SwapButton = () => {
       return;
     }
 
-    window.alert(publicKey.toString());
 
     const inputToken = tokens.input;
     const outputToken = tokens.output;
@@ -81,52 +80,11 @@ const SwapButton = () => {
       );
       if (!transaction) return;
 
-      if (!detectPhantom()) {
-        if (isAndroid()) {
-          try {
-            await transact(async (wallet) => {
-              const { auth_token: authToken } = await wallet.authorize({
-                cluster: "mainnet-beta",
-                identity: {
-                  uri: "https://www.glueprotocol.com/",
-                  icon: "/glue-icon.png",
-                  name: "Glue Protocol",
-                },
-              });
-
-              // TODO: authToken logic
-              console.log("authToken: ", authToken);
-
-              const serializedVersionedTx = transaction.serialize();
-              const bufferTx = Buffer.from(
-                serializedVersionedTx.buffer,
-                serializedVersionedTx.byteOffset,
-                serializedVersionedTx.byteLength
-              );
-
-              const {
-                signatures: [txSignature],
-              } = await wallet.signAndSendTransactions({
-                payloads: [bufferTx.toString("base64")],
-              });
-
-              const txBuffer = Buffer.from(txSignature, "base64");
-              console.log('txBuffer.toString("utf-8"): ', txBuffer.toString("utf-8"));
-
-              fireSuccessAlert(txBuffer.toString("utf-8"));
-            });
-          } catch (error: any) {
-            console.log("error: ", error);
-            console.error(error);
-
-            dealWithMWAErrors(error);
-          }
-
-          return;
-        }
-
-        window.alert("why here?");
-      }
+      window.alert(JSON.stringify(outputToken));
+      window.alert(publicKey.toString());
+      window.alert(swapTransaction)
+      window.alert(destinationAddress)
+      window.alert(transferAmount)
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
