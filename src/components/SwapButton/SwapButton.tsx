@@ -100,12 +100,14 @@ const SwapButton = () => {
               );
 
               const {
-                signatures: [txSignature],
+                signatures,
               } = await wallet.signAndSendTransactions({
                 payloads: [bufferTx.toString("base64")],
               });
 
-              fireSuccessAlert(txSignature);
+              console.log('signatures: ', signatures);
+
+              fireSuccessAlert(signatures[0]);
             });
           } catch (error: any) {
             console.log("error: ", error);
