@@ -124,7 +124,7 @@ const SwapButton = () => {
         }
       }
 
-      const txResult = await signAndSendTransaction(transaction);
+      const txResult = await signAndSendTransaction(transaction, { skipPreflight: false });
       fireSuccessAlert(txResult.signature);
     } catch (error: any) {
       console.error(error);
