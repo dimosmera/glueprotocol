@@ -24,10 +24,6 @@
   box-shadow: rgb(9 22 46) 0px 6px 12px 0px;
 }
 
-.blue-outline {
-  border: 1px solid var(--dodger-blue);
-}
-
 .input {
   width: 100%;
 
@@ -46,7 +42,33 @@
   outline: none;
 }
 
-.unknown-address-text {
+.payment-link-button {
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+  height: 40px;
+  margin: 0px 8px 0px 12px;
+  padding: 0px 12px;
+
+  background-color: var(--blue-zodiac);
+  color: var(--heather);
+
+  font-size: var(--font-size-sm-plus);
+}
+
+.payment-link-button:hover {
+  color: var(--white);
+}
+
+.payment-link-button:disabled {
+  background-color: var(--fiord);
+  box-shadow: none;
+  cursor: default;
+  color: var(--waterloo);
+}
+
+.known-address-text {
   color: var(--cornflower-blue);
   cursor: pointer;
   margin-top: .75rem;

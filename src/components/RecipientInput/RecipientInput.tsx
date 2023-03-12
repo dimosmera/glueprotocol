@@ -10,7 +10,9 @@ const RecipientInput = () => {
   const [focused, setFocused] = useState(false);
 
   const { inputs, dispatch } = useUserInputs();
-  const { destinationAddress } = inputs;
+  const { destinationAddress, paymentLinkVisible } = inputs;
+
+  if (paymentLinkVisible) return null;
 
   const handleFocus = () => {
     setFocused(true);
@@ -24,6 +26,12 @@ const RecipientInput = () => {
     dispatch({
       type: ActionTypes.SET_DESTINATION_ADDRESS,
       destinationAddress: event.currentTarget.value,
+    });
+  };
+
+  const handleUnknownAddressClick = () => {
+    dispatch({
+      type: ActionTypes.SET_PAYMENT_LINK_VISIBILITY,
     });
   };
 
@@ -47,6 +55,13 @@ const RecipientInput = () => {
           className={`${styles.input}`}
         />
       </div>
+
+      <p
+        className={`${styles["unknown-address-text"]}`}
+        onClick={handleUnknownAddressClick}
+      >
+        {"Don't know their address?"}
+      </p>
     </div>
   );
 };

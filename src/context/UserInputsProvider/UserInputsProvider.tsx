@@ -46,6 +46,7 @@ const UserInputsProvider = ({ children }: Props) => {
     destinationAddress: "",
     swapTransactionInputs: undefined,
     error: undefined,
+    paymentLinkVisible: false,
   });
 
   return (
