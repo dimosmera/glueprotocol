@@ -29,7 +29,7 @@
 
   background: none;
   border: none;
-  color: inherit;
+  color: var(--heather);
 
   padding: 5px;
   height: 40px;
