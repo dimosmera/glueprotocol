@@ -102,17 +102,33 @@ const PhantomProvider = ({ children }: Props) => {
     if (isAndroid()) {
       try {
         await transact(async (wallet) => {
-          const { accounts, auth_token: authToken } = await wallet.authorize({
-            cluster: "mainnet-beta",
-            identity: {
-              uri: "https://www.glueprotocol.com/",
-              icon: "/glue-icon.png",
-              name: "Glue Protocol",
-            },
-          });
+          let accounts = [];
+          let authToken = "";
 
-          // TODO: Save authToken in local storage
-          console.log("authToken: ", authToken);
+          const authTokenFromLocalStorage =
+            "eyJ0eXAiOiJwaGFudG9tLXdhbGxldC1hdXRoLXRva2VuIiwiaWlkIjoiOCIsInRpZCI6Ijk2In3cxu+9oCKBmq4HLQizSQT9l2MorQnxQb+azxxiYuAO1Q";
+          if (authTokenFromLocalStorage) {
+            const { accounts: acc, auth_token } = await wallet.reauthorize({
+              auth_token: authTokenFromLocalStorage,
+            });
+
+            console.log("authToken after reauthorize: ", auth_token);
+            accounts = acc;
+            authToken = auth_token;
+          } else {
+            const { accounts: acc, auth_token } = await wallet.authorize({
+              cluster: "mainnet-beta",
+              identity: {
+                uri: "https://www.glueprotocol.com/",
+                icon: "/glue-icon.png",
+                name: "Glue Protocol",
+              },
+            });
+
+            console.log("authToken after authorize: ", auth_token);
+            accounts = acc;
+            authToken = auth_token;
+          }
 
           const bufferData = Buffer.from(accounts[0].address, "base64");
           const publicKey = new PublicKey(bs58.encode(bufferData));
