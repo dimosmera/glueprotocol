@@ -76,9 +76,13 @@ const SwapButton = () => {
       });
       const { swapTransaction } = result.data;
 
+      const destination = paymentLinkVisible
+        ? paymentLink.publicKey
+        : destinationAddress;
+
       const transaction = await prepareSwapTransaction(
         swapTransaction,
-        destinationAddress,
+        destination,
         outputToken,
         publicKey,
         transferAmount
