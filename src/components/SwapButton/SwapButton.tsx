@@ -124,12 +124,14 @@ const SwapButton = () => {
         }
       }
 
-      const txResult = await signAndSendTransaction(transaction, { skipPreflight: false });
+      // skipPreflight defaults to false, but there's a phantom bug on mobile where it crashes if options passed are empty
+      // maybe they fix it in the future, then the options can be removed from here
+      const txResult = await signAndSendTransaction(transaction, {
+        skipPreflight: false,
+      });
       fireSuccessAlert(txResult.signature);
     } catch (error: any) {
       console.error(error);
-
-      // window.alert(JSON.stringify(error));
 
       if (error && error.code === 4001) {
         fireErrorAlert("Canceled");

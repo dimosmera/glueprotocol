@@ -11,6 +11,8 @@ const dealWithMWAErrors = (error: { code: number } | undefined) => {
     return;
   }
 
+  console.log('error.code: ', error.code);
+
   switch (error.code) {
     case SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED:
       fireErrorAlert("Connection rejected");
