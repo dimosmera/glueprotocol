@@ -109,37 +109,9 @@ const SwapButton = () => {
                 payloads: [bufferTx.toString("base64")],
               });
 
-              console.log('txSignature: ', txSignature);
-
               const txBuffer = Buffer.from(txSignature, "base64");
-
-              const base58EncodedSignature = bs58.encode(txBuffer);
-              console.log('base58EncodedSignature: ', base58EncodedSignature);
-
-              const one = txBuffer.toString("ascii");
-              console.log('one: ', one);
-              const two = txBuffer.toString("base64");
-              console.log('two: ', two);
-              const four = txBuffer.toString("binary");
-              console.log('four: ', four);
-              const five = txBuffer.toString("hex");
-              console.log('five: ', five);
-              const six = txBuffer.toString("latin1");
-              console.log('six: ', six);
-              const seen = txBuffer.toString("ucs-2");
-              console.log('seen: ', seen);
-              const eig = txBuffer.toString("ucs2");
-              console.log('eig: ', eig);
-              const nine = txBuffer.toString("utf-8");
-              console.log('nine: ', nine);
-              const ten = txBuffer.toString("utf16le");
-              console.log('ten: ', ten);
-              const ele = txBuffer.toString("utf8");
-              console.log('ele: ', ele);
-              const twi = txBuffer.toString();
-              console.log('twi: ', twi);
-
-              fireSuccessAlert(txSignature);
+              const decodedSignature = bs58.encode(txBuffer);
+              fireSuccessAlert(decodedSignature);
             });
           } catch (error: any) {
             console.log("error: ", error);
@@ -157,7 +129,7 @@ const SwapButton = () => {
     } catch (error: any) {
       console.error(error);
 
-      window.alert(JSON.stringify(error));
+      // window.alert(JSON.stringify(error));
 
       if (error && error.code === 4001) {
         fireErrorAlert("Canceled");
