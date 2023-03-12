@@ -34,7 +34,7 @@ const SwapButton = () => {
     tokens,
     lastChanged,
     error,
-    paymentLinkURL,
+    paymentLink,
     paymentLinkVisible,
   } = inputs;
 
@@ -43,7 +43,7 @@ const SwapButton = () => {
     (!swapTransactionInputs ||
       (!paymentLinkVisible &&
         (!destinationAddress || destinationAddress === "")) ||
-      (paymentLinkVisible && (!paymentLinkURL || paymentLinkURL === "")) ||
+      (paymentLinkVisible && (!paymentLink.url || paymentLink.url === "")) ||
       error !== undefined);
 
   const handleSwap = async () => {
@@ -106,7 +106,7 @@ const SwapButton = () => {
 
               const txBuffer = Buffer.from(txSignature, "base64");
               const decodedSignature = bs58.encode(txBuffer);
-              fireSuccessAlert(decodedSignature);
+              fireSuccessAlert({ txId: decodedSignature });
             });
           } catch (error: any) {
             console.log("MWA signAndSendTransactions error: ", error);
@@ -124,7 +124,7 @@ const SwapButton = () => {
       const txResult = await signAndSendTransaction(transaction, {
         skipPreflight: false,
       });
-      fireSuccessAlert(txResult.signature);
+      fireSuccessAlert({ txId: txResult.signature });
     } catch (error: any) {
       console.error(error);
 

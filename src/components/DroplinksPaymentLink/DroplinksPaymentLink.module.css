@@ -35,7 +35,7 @@
   height: 40px;
 
   font-family: inherit;
-  font-size: var(--font-size-md);
+  font-size: var(--font-size-sm-plus);
 }
 
 .input:focus {

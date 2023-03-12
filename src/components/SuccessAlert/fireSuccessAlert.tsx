@@ -2,15 +2,27 @@ import { fireSweetAlert } from "components/SweetAlerts";
 
 import SuccessAlert from "./SuccessAlert";
 
-const fireSuccessAlert = (txId: string) =>
+interface Props {
+  txId?: string;
+  successText?: string;
+  timer?: number;
+  timerProgressBar?: boolean;
+}
+
+const fireSuccessAlert = ({
+  txId,
+  timer = 30_000,
+  timerProgressBar = true,
+  successText,
+}: Props) =>
   fireSweetAlert({
     toast: true,
     position: "top-end",
     icon: "success",
-    timer: 30_000,
+    timer,
     showConfirmButton: false,
-    timerProgressBar: true,
-    html: <SuccessAlert txId={txId} />,
+    timerProgressBar,
+    html: <SuccessAlert txId={txId} successText={successText} />,
   });
 
 export default fireSuccessAlert;
