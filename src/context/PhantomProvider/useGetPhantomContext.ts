@@ -1,26 +1,17 @@
 import { useContext } from "react";
-import {
-  PublicKey,
-  SendOptions,
-  Transaction,
-  VersionedTransaction,
-} from "@solana/web3.js";
+import { PublicKey, VersionedTransaction } from "@solana/web3.js";
 
 import { PhantomContext } from "./PhantomProvider";
 
 interface ReturnType {
   connect: () => void;
-  connectAsync: () => Promise<{ publicKey: PublicKey }>;
   disconnect: () => void;
   detectPhantom: () => boolean;
-  handleSuccessfulConnection: (response: any) => void;
   publicKey: PublicKey | undefined;
   connected: boolean;
-  signMessage: ((message: Uint8Array) => Promise<Uint8Array>) | undefined;
   signAndSendTransaction: (
-    transaction: Transaction | VersionedTransaction,
-    options?: SendOptions | undefined
-  ) => Promise<{ publicKey: string; signature: string }>;
+    transaction: VersionedTransaction
+  ) => Promise<{ signature: string } | undefined>;
 }
 
 const error =
@@ -32,26 +23,20 @@ const useGetPhantomContext = (): ReturnType => {
 
   const {
     connect,
-    connectAsync,
     disconnect,
     detectPhantom,
     publicKey,
     connected,
-    signMessage,
     signAndSendTransaction,
-    handleSuccessfulConnection,
   } = results;
 
   return {
     connect,
-    connectAsync,
     disconnect,
     detectPhantom,
     publicKey,
     connected,
-    signMessage,
     signAndSendTransaction,
-    handleSuccessfulConnection,
   };
 };
 

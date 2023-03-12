@@ -1,32 +1,11 @@
 import { useState } from "react";
-import {
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  TOKEN_PROGRAM_ID,
-  Token,
-} from "@solana/spl-token";
-import {
-  AddressLookupTableAccount,
-  PublicKey,
-  SystemProgram,
-  TransactionMessage,
-  VersionedTransaction,
-} from "@solana/web3.js";
-import {
-  transact,
-  SolanaMobileWalletAdapterProtocolErrorCode,
-} from "@solana-mobile/mobile-wallet-adapter-protocol";
-import bs58 from "bs58";
 
 import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
-import getMainnetConnection from "utils/getMainnetConnection";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
-import isSolToken from "utils/isSolToken";
-import getDestinationPubKey from "utils/getDestinationPubKey";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 import includePlatformFee from "utils/includePlatformFee";
-import isAndroid from "utils/isAndroid";
 
 import prepareSwapTransaction from "./prepareSwapTransaction";
 import styles from "./SwapButton.module.css";
@@ -57,17 +36,6 @@ const SwapButton = () => {
 
   const handleSwap = async () => {
     if (!publicKey) {
-      const isPhantomInstalled = detectPhantom();
-      if (!isPhantomInstalled) {
-        // if (shouldDeeplink) {
-        //   openPhantomDeeplink(window.location.href);
-        //   return;
-        // }
-
-        window.open("https://phantom.app/", "_blank");
-        return;
-      }
-
       connect();
       return;
     }
@@ -80,7 +48,7 @@ const SwapButton = () => {
     fireLoadingAlert();
     setLoadingTransferTx(true);
 
-    // @ts-ignore - Surprisingly, TS cannot infer we are checking for this
+    // @ts-ignore - TS cannot infer we are checking for this
     const { route, amount: transferAmount } = swapTransactionInputs;
 
     try {
@@ -105,74 +73,9 @@ const SwapButton = () => {
       );
       if (!transaction) return;
 
-      if (isAndroid() && !detectPhantom()) {
-        try {
-          await transact(async (wallet) => {
-            const { accounts } = await wallet.authorize({
-              cluster: "mainnet-beta",
-              identity: {
-                uri: "https://www.glueprotocol.com/",
-                icon: "/glue-icon.png",
-                name: "Glue Protocol",
-              },
-            });
-
-            // const bufferData = Buffer.from(accounts[0].address, "base64");
-            // const publicKey = bs58.encode(bufferData);
-            // console.log("publicKey: ", publicKey);
-
-            const serializedVersionedTx = transaction.serialize();
-            const bufferTx = Buffer.from(
-              serializedVersionedTx.buffer,
-              serializedVersionedTx.byteOffset,
-              serializedVersionedTx.byteLength
-            );
-
-            await wallet
-              .signAndSendTransactions({
-                payloads: [bufferTx.toString("base64")],
-              })
-              .then(({ signatures }) => {
-                fireSuccessAlert(signatures[0]);
-              })
-              .catch((error: any) => {
-                console.error(error);
-
-                if (error) {
-                  if (
-                    error.code ===
-                    SolanaMobileWalletAdapterProtocolErrorCode.ERROR_NOT_SIGNED
-                  ) {
-                    fireErrorAlert("Sign request declined");
-
-                    return;
-                  }
-                }
-
-                fireErrorAlert();
-              });
-          });
-        } catch (error: any) {
-          console.log("error: ", error);
-          console.error(error);
-
-          if (error) {
-            if (
-              error.code ===
-              SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED
-            ) {
-              fireErrorAlert("Connection rejected");
-              return;
-            }
-          }
-
-          fireErrorAlert();
-        }
-
-        return;
-      }
-
       const txResult = await signAndSendTransaction(transaction);
+      if (!txResult) throw Error();
+
       fireSuccessAlert(txResult.signature);
     } catch (error: any) {
       console.error(error);

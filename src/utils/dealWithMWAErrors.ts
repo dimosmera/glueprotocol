@@ -1,6 +1,4 @@
-import {
-  SolanaMobileWalletAdapterProtocolErrorCode,
-} from "@solana-mobile/mobile-wallet-adapter-protocol";
+import { SolanaMobileWalletAdapterProtocolErrorCode } from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import { fireErrorAlert } from "components/SweetAlerts";
 
@@ -12,6 +10,8 @@ const dealWithMWAErrors = (error: { code: number } | undefined) => {
     fireErrorAlert();
     return;
   }
+
+  console.log("error.code: ", error.code);
 
   switch (error.code) {
     case SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED:
@@ -26,6 +26,6 @@ const dealWithMWAErrors = (error: { code: number } | undefined) => {
       fireErrorAlert();
       break;
   }
-}
+};
 
 export default dealWithMWAErrors;
