@@ -1,12 +1,19 @@
+import { useState } from "react";
+
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import { ActionTypes } from "context/UserInputsProvider/reducer";
 import useCreateDroplink from "services/api/useCreateDroplink";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireErrorAlert, fireLoadingAlert } from "components/SweetAlerts";
+import copyToClipboard from "utils/copyToClipboard";
 
 import styles from "./DroplinksPaymentLink.module.css";
 
+let timeoutId: ReturnType<typeof setTimeout> | null;
+
 const DroplinksPaymentLink = () => {
+  const [linkCopiedText, setLinkCopiedText] = useState("Copy");
+
   const { inputs, dispatch } = useUserInputs();
 
   const { isLoading: createLoading, mutateAsync: createDroplink } =
@@ -47,7 +54,15 @@ const DroplinksPaymentLink = () => {
     }
   };
 
-  const handleCopyLink = () => {};
+  const handleCopyLink = () => {
+    copyToClipboard(paymentLink.url);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    setLinkCopiedText("Copied");
+    timeoutId = setTimeout(() => setLinkCopiedText("Copy"), 1500);
+  };
 
   return (
     <div className={`flexbox ${styles.container}`}>
@@ -67,7 +82,7 @@ const DroplinksPaymentLink = () => {
             className={styles["copy-link-button"]}
             onClick={handleCopyLink}
           >
-            Copy
+            {linkCopiedText}
           </button>
         ) : (
           <button
