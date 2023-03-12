@@ -112,12 +112,14 @@ const SwapButton = () => {
               console.log('txSignature: ', txSignature);
 
               const txBuffer = Buffer.from(txSignature, "base64");
+
+              const base58EncodedSignature = bs58.encode(txBuffer);
+              console.log('base58EncodedSignature: ', base58EncodedSignature);
+
               const one = txBuffer.toString("ascii");
               console.log('one: ', one);
               const two = txBuffer.toString("base64");
               console.log('two: ', two);
-              const three = txBuffer.toString("base64url");
-              console.log('three: ', three);
               const four = txBuffer.toString("binary");
               console.log('four: ', four);
               const five = txBuffer.toString("hex");
@@ -136,9 +138,6 @@ const SwapButton = () => {
               console.log('ele: ', ele);
               const twi = txBuffer.toString();
               console.log('twi: ', twi);
-
-              const base58EncodedSignature = bs58.encode(txBuffer);
-              console.log('base58EncodedSignature: ', base58EncodedSignature);
 
               fireSuccessAlert(txSignature);
             });
