@@ -6,7 +6,7 @@ import styles from "./DroplinksPaymentLink.module.css";
 const DroplinksPaymentLink = () => {
   const { inputs, dispatch } = useUserInputs();
 
-  const { paymentLinkVisible } = inputs;
+  const { paymentLinkVisible, paymentLinkURL } = inputs;
   if (!paymentLinkVisible) return null;
 
   const handleKnowAddressClick = () => {
@@ -15,6 +15,10 @@ const DroplinksPaymentLink = () => {
     });
   };
 
+  const handleCreateLink = () => {};
+
+  const handleCopyLink = () => {};
+
   return (
     <div className={`flexbox ${styles.container}`}>
       <p className={styles["explanation-text"]}>Payment link URL</p>
@@ -22,13 +26,27 @@ const DroplinksPaymentLink = () => {
       <div className={`flexbox ${styles["input-container"]}`}>
         <input
           type="text"
-          // value={}
+          value={paymentLinkURL}
           readOnly
           placeholder="https://"
           className={styles.input}
         />
 
-        <button className={styles["payment-link-button"]}>Create</button>
+        {paymentLinkURL && paymentLinkURL !== "" ? (
+          <button
+            className={styles["copy-link-button"]}
+            onClick={handleCopyLink}
+          >
+            Copy
+          </button>
+        ) : (
+          <button
+            className={styles["create-link-button"]}
+            onClick={handleCreateLink}
+          >
+            Create
+          </button>
+        )}
       </div>
 
       <p

@@ -42,7 +42,35 @@
   outline: none;
 }
 
-.payment-link-button {
+.create-link-button {
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+  height: 40px;
+  margin: 0px 8px 0px 12px;
+  padding: 0px 12px;
+
+  background-color: var(--dodger-blue);
+  color: var(--white);
+
+  font-size: var(--font-size-sm-plus);
+
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
+.create-link-button:hover {
+  background-color: var(--denim);
+}
+
+.create-link-button:disabled {
+  background-color: var(--fiord);
+  box-shadow: none;
+  cursor: default;
+  color: var(--waterloo);
+}
+
+.copy-link-button {
   border: none;
   border-radius: 8px;
 
@@ -57,15 +85,8 @@
   font-size: var(--font-size-sm-plus);
 }
 
-.payment-link-button:hover {
+.copy-link-button:hover {
   color: var(--white);
-}
-
-.payment-link-button:disabled {
-  background-color: var(--fiord);
-  box-shadow: none;
-  cursor: default;
-  color: var(--waterloo);
 }
 
 .known-address-text {

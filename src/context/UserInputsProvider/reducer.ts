@@ -30,6 +30,7 @@ export interface Inputs {
     | undefined;
   error: InputError | undefined;
   paymentLinkVisible: boolean;
+  paymentLinkURL: string;
 }
 
 export enum ActionTypes {
@@ -42,6 +43,7 @@ export enum ActionTypes {
   CLEAR_ERRORS = "CLEAR_ERRORS",
   CLEAR_AMOUNTS = "CLEAR_AMOUNTS",
   SET_PAYMENT_LINK_VISIBILITY = "SET_PAYMENT_LINK_VISIBILITY",
+  SET_PAYMENT_LINK_URL = "SET_PAYMENT_LINK_URL",
 }
 
 export type Action =
@@ -79,6 +81,10 @@ export type Action =
     }
   | {
       type: ActionTypes.SET_PAYMENT_LINK_VISIBILITY;
+    }
+  | {
+      type: ActionTypes.SET_PAYMENT_LINK_URL;
+      paymentLinkURL: string;
     }
   | { type: ActionTypes.SET_DESTINATION_ADDRESS; destinationAddress: string };
 
@@ -127,6 +133,8 @@ export const reducer = (state: Inputs, action: Action): Inputs => {
       return { ...state, error: action.error };
     case ActionTypes.SET_PAYMENT_LINK_VISIBILITY:
       return { ...state, paymentLinkVisible: !state.paymentLinkVisible };
+    case ActionTypes.SET_PAYMENT_LINK_URL:
+      return { ...state, paymentLinkURL: action.paymentLinkURL };
 
     default:
       return state;

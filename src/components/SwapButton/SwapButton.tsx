@@ -34,13 +34,16 @@ const SwapButton = () => {
     tokens,
     lastChanged,
     error,
+    paymentLinkURL,
+    paymentLinkVisible,
   } = inputs;
 
   const isDisabled =
     publicKey &&
     (!swapTransactionInputs ||
-      !destinationAddress ||
-      destinationAddress === "" ||
+      (!paymentLinkVisible &&
+        (!destinationAddress || destinationAddress === "")) ||
+      (paymentLinkVisible && (!paymentLinkURL || paymentLinkURL === "")) ||
       error !== undefined);
 
   const handleSwap = async () => {
