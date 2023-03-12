@@ -199,6 +199,7 @@ const PhantomProvider = ({ children }: Props) => {
       if (!existingToken) return;
 
       removeItemFromLocalStorage(MWA_AUTH_TOKEN_KEY);
+      setPhantomContext(undefined);
 
       try {
         await transact(async (wallet) => {
