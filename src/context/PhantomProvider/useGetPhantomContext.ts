@@ -6,7 +6,7 @@ import { PhantomContext } from "./PhantomProvider";
 
 interface ReturnType {
   connect: () => void;
-  disconnect: () => void;
+  disconnect: () => Promise<void>;
   detectPhantom: () => boolean;
   publicKey: PublicKey | undefined;
   connected: boolean;

@@ -13,6 +13,7 @@ import openPhantomDeeplink from "utils/openPhantomDeeplink";
 import isAndroid from "utils/isAndroid";
 import dealWithMWAErrors from "utils/dealWithMWAErrors";
 import {
+  MWA_AUTH_TOKEN_KEY,
   getItemFromLocalStorage,
   setItemToLocalStorage,
   removeItemFromLocalStorage,
@@ -92,13 +93,13 @@ const PhantomProvider = ({ children }: Props) => {
       label?: string | undefined;
     }>[];
   }> => {
-    const existingToken = getItemFromLocalStorage("glueMWAAuthToken");
+    const existingToken = getItemFromLocalStorage(MWA_AUTH_TOKEN_KEY);
 
     if (existingToken) {
       return wallet
         .reauthorize({ auth_token: existingToken })
         .then(({ accounts, auth_token: authToken }) => {
-          setItemToLocalStorage("glueMWAAuthToken", authToken);
+          setItemToLocalStorage(MWA_AUTH_TOKEN_KEY, authToken);
 
           return { accounts };
         })
@@ -112,7 +113,7 @@ const PhantomProvider = ({ children }: Props) => {
               "Invalid auth token, beging authorisation from scratch"
             );
 
-            removeItemFromLocalStorage("glueMWAAuthToken");
+            removeItemFromLocalStorage(MWA_AUTH_TOKEN_KEY);
 
             return authoriseWithMobileWallet(wallet);
           }
@@ -134,7 +135,7 @@ const PhantomProvider = ({ children }: Props) => {
 
     const { accounts, auth_token: authToken } = authorizationResult;
 
-    setItemToLocalStorage("glueMWAAuthToken", authToken);
+    setItemToLocalStorage(MWA_AUTH_TOKEN_KEY, authToken);
 
     return { accounts };
   };
@@ -173,7 +174,7 @@ const PhantomProvider = ({ children }: Props) => {
           handleSuccessfulConnection({ publicKey });
         });
       } catch (error: any) {
-        console.log("error: ", error);
+        console.log("MWA authorize error: ", error);
         console.error(error);
 
         dealWithMWAErrors(error);
@@ -185,8 +186,33 @@ const PhantomProvider = ({ children }: Props) => {
     window.open("https://phantom.app/", "_blank");
   };
 
-  const disconnect = () => {
-    getProvider()?.disconnect();
+  const disconnect = async () => {
+    const isPhantomInstalled = detectPhantom();
+    if (isPhantomInstalled) {
+      getProvider()?.disconnect();
+
+      return;
+    }
+
+    if (isAndroid()) {
+      const existingToken = getItemFromLocalStorage(MWA_AUTH_TOKEN_KEY);
+      if (!existingToken) return;
+
+      removeItemFromLocalStorage(MWA_AUTH_TOKEN_KEY);
+
+      try {
+        await transact(async (wallet) => {
+          await wallet.deauthorize({ auth_token: existingToken });
+        });
+      } catch (error: any) {
+        console.log("MWA deauthorize error: ", error);
+        console.error(error);
+
+        dealWithMWAErrors(error);
+      }
+
+      return;
+    }
   };
 
   const detectPhantom = (): boolean => {

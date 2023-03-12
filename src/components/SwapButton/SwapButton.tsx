@@ -14,9 +14,6 @@ import dealWithMWAErrors from "utils/dealWithMWAErrors";
 import prepareSwapTransaction from "./prepareSwapTransaction";
 import styles from "./SwapButton.module.css";
 
-// TODO: disconnect when MWA
-// auth token
-
 const SwapButton = () => {
   const {
     publicKey,
@@ -109,7 +106,7 @@ const SwapButton = () => {
               fireSuccessAlert(decodedSignature);
             });
           } catch (error: any) {
-            console.log("error: ", error);
+            console.log("MWA signAndSendTransactions error: ", error);
             console.error(error);
 
             dealWithMWAErrors(error);

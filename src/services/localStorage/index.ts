@@ -1,3 +1,5 @@
+export const MWA_AUTH_TOKEN_KEY = "glueMWAAuthToken";
+
 export const setItemToLocalStorage = (key: string, value: any) => {
   try {
     if (!localStorage) return;

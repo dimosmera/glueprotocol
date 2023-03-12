@@ -11,7 +11,7 @@ const AppHeader = () => {
 
   const handleConnect = async () => {
     if (publicKey) {
-      disconnect();
+      await disconnect();
       return;
     }
 
