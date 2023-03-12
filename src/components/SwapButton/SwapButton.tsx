@@ -46,6 +46,8 @@ const SwapButton = () => {
       return;
     }
 
+    window.alert(publicKey.toString());
+
     const inputToken = tokens.input;
     const outputToken = tokens.output;
 
@@ -131,7 +133,7 @@ const SwapButton = () => {
     } catch (error: any) {
       console.error(error);
 
-      window.alert(error);
+      window.alert(JSON.stringify(error));
 
       if (error && error.code === 4001) {
         fireErrorAlert("Canceled");
