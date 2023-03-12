@@ -4,6 +4,7 @@ import { PublicKey, SendOptions, VersionedTransaction } from "@solana/web3.js";
 import {
   MobileWallet,
   transact,
+  SolanaMobileWalletAdapterProtocolErrorCode,
 } from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import { fireErrorAlert } from "components/SweetAlerts";
@@ -14,6 +15,7 @@ import dealWithMWAErrors from "utils/dealWithMWAErrors";
 import {
   getItemFromLocalStorage,
   setItemToLocalStorage,
+  removeItemFromLocalStorage,
 } from "services/localStorage";
 
 export const PhantomContext = createContext(undefined);
@@ -82,23 +84,53 @@ const PhantomProvider = ({ children }: Props) => {
     });
   }, []);
 
-  const authoriseWithMobileWallet = async (wallet: MobileWallet) => {
+  const authoriseWithMobileWallet = async (
+    wallet: MobileWallet
+  ): Promise<{
+    accounts: Readonly<{
+      address: string;
+      label?: string | undefined;
+    }>[];
+  }> => {
     const existingToken = getItemFromLocalStorage("glueMWAAuthToken");
+
+    if (existingToken) {
+      return wallet
+        .reauthorize({ auth_token: existingToken })
+        .then(({ accounts, auth_token: authToken }) => {
+          setItemToLocalStorage("glueMWAAuthToken", authToken);
+
+          return { accounts };
+        })
+        .catch((error: any) => {
+          if (
+            error &&
+            error.code ===
+              SolanaMobileWalletAdapterProtocolErrorCode.ERROR_AUTHORIZATION_FAILED
+          ) {
+            console.log(
+              "Invalid auth token, beging authorisation from scratch"
+            );
+
+            removeItemFromLocalStorage("glueMWAAuthToken");
+
+            return authoriseWithMobileWallet(wallet);
+          }
+
+          throw error;
+        });
+    }
 
     console.log("existingToken: ", existingToken);
 
-    const authorizationResult = await (existingToken
-      ? wallet.reauthorize({
-          auth_token: existingToken,
-        })
-      : wallet.authorize({
-          cluster: "mainnet-beta",
-          identity: {
-            uri: "https://www.glueprotocol.com/",
-            icon: "/glue-icon.png",
-            name: "Glue Protocol",
-          },
-        }));
+    const authorizationResult = await wallet.authorize({
+      cluster: "mainnet-beta",
+      identity: {
+        uri: "https://www.glueprotocol.com/",
+        icon: "/glue-icon.png",
+        name: "Glue Protocol",
+      },
+    });
 
     const { accounts, auth_token: authToken } = authorizationResult;
 
