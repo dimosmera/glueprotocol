@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
+import bs58 from "bs58";
 
 import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
@@ -80,7 +81,6 @@ const SwapButton = () => {
       if (!transaction) return;
 
       if (!detectPhantom()) {
-        window.alert("not her");
         if (isAndroid()) {
           try {
             await transact(async (wallet) => {
@@ -137,6 +137,9 @@ const SwapButton = () => {
               const twi = txBuffer.toString();
               console.log('twi: ', twi);
 
+              const base58EncodedSignature = bs58.encode(txBuffer);
+              console.log('base58EncodedSignature: ', base58EncodedSignature);
+
               fireSuccessAlert(txSignature);
             });
           } catch (error: any) {
@@ -149,9 +152,6 @@ const SwapButton = () => {
           return;
         }
       }
-
-      window.alert("here");
-      window.alert(signAndSendTransaction);
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
