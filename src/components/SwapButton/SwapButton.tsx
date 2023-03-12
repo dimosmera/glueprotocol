@@ -13,6 +13,9 @@ import dealWithMWAErrors from "utils/dealWithMWAErrors";
 import prepareSwapTransaction from "./prepareSwapTransaction";
 import styles from "./SwapButton.module.css";
 
+// TODO: disconnect when MWA
+// auth token
+
 const SwapButton = () => {
   const { publicKey, signAndSendTransaction, detectPhantom, connect } =
     useGetPhantomContext();
@@ -100,14 +103,15 @@ const SwapButton = () => {
               );
 
               const {
-                signatures,
+                signatures: [txSignature],
               } = await wallet.signAndSendTransactions({
                 payloads: [bufferTx.toString("base64")],
               });
 
-              console.log('signatures: ', signatures);
+              const txBuffer = Buffer.from(txSignature, "base64");
+              console.log('txBuffer.toString("utf-8"): ', txBuffer.toString("utf-8"));
 
-              fireSuccessAlert(signatures[0]);
+              fireSuccessAlert(txBuffer.toString("utf-8"));
             });
           } catch (error: any) {
             console.log("error: ", error);
@@ -118,12 +122,16 @@ const SwapButton = () => {
 
           return;
         }
+
+        window.alert("why here?");
       }
 
       const txResult = await signAndSendTransaction(transaction);
       fireSuccessAlert(txResult.signature);
     } catch (error: any) {
       console.error(error);
+
+      window.alert(error);
 
       if (error && error.code === 4001) {
         fireErrorAlert("Canceled");
