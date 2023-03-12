@@ -18,8 +18,13 @@ import styles from "./SwapButton.module.css";
 // auth token
 
 const SwapButton = () => {
-  const { publicKey, signAndSendTransaction, detectPhantom, connect } =
-    useGetPhantomContext();
+  const {
+    publicKey,
+    signAndSendTransaction,
+    detectPhantom,
+    connect,
+    authoriseWithMobileWallet,
+  } = useGetPhantomContext();
 
   const { mutateAsync: fetchSwapTransaction } = useFetchSwapTransaction();
 
@@ -84,17 +89,7 @@ const SwapButton = () => {
         if (isAndroid()) {
           try {
             await transact(async (wallet) => {
-              const { auth_token: authToken } = await wallet.authorize({
-                cluster: "mainnet-beta",
-                identity: {
-                  uri: "https://www.glueprotocol.com/",
-                  icon: "/glue-icon.png",
-                  name: "Glue Protocol",
-                },
-              });
-
-              // TODO: authToken logic
-              console.log("authToken: ", authToken);
+              await authoriseWithMobileWallet(wallet);
 
               const serializedVersionedTx = transaction.serialize();
               const bufferTx = Buffer.from(

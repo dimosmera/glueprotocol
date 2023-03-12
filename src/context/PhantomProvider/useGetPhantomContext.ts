@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { PublicKey, SendOptions, VersionedTransaction } from "@solana/web3.js";
+import { MobileWallet } from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import { PhantomContext } from "./PhantomProvider";
 
@@ -13,6 +14,12 @@ interface ReturnType {
     transaction: VersionedTransaction,
     options?: SendOptions | undefined
   ) => Promise<{ signature: string }>;
+  authoriseWithMobileWallet: (wallet: MobileWallet) => Promise<{
+    accounts: Readonly<{
+      address: string;
+      label?: string | undefined;
+    }>[];
+  }>;
 }
 
 const error =
@@ -29,6 +36,7 @@ const useGetPhantomContext = (): ReturnType => {
     publicKey,
     connected,
     signAndSendTransaction,
+    authoriseWithMobileWallet,
   } = results;
 
   return {
@@ -38,6 +46,7 @@ const useGetPhantomContext = (): ReturnType => {
     publicKey,
     connected,
     signAndSendTransaction,
+    authoriseWithMobileWallet,
   };
 };
 

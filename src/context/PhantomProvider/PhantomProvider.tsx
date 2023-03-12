@@ -1,13 +1,20 @@
 import React, { createContext, useEffect, useState } from "react";
 import bs58 from "bs58";
 import { PublicKey, SendOptions, VersionedTransaction } from "@solana/web3.js";
-import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
+import {
+  MobileWallet,
+  transact,
+} from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import { fireErrorAlert } from "components/SweetAlerts";
 import isiOS from "utils/isiOS";
 import openPhantomDeeplink from "utils/openPhantomDeeplink";
 import isAndroid from "utils/isAndroid";
 import dealWithMWAErrors from "utils/dealWithMWAErrors";
+import {
+  getItemFromLocalStorage,
+  setItemToLocalStorage,
+} from "services/localStorage";
 
 export const PhantomContext = createContext(undefined);
 
@@ -75,6 +82,31 @@ const PhantomProvider = ({ children }: Props) => {
     });
   }, []);
 
+  const authoriseWithMobileWallet = async (wallet: MobileWallet) => {
+    const existingToken = getItemFromLocalStorage("glueMWAAuthToken");
+
+    console.log("existingToken: ", existingToken);
+
+    const authorizationResult = await (existingToken
+      ? wallet.reauthorize({
+          auth_token: existingToken,
+        })
+      : wallet.authorize({
+          cluster: "mainnet-beta",
+          identity: {
+            uri: "https://www.glueprotocol.com/",
+            icon: "/glue-icon.png",
+            name: "Glue Protocol",
+          },
+        }));
+
+    const { accounts, auth_token: authToken } = authorizationResult;
+
+    setItemToLocalStorage("glueMWAAuthToken", authToken);
+
+    return { accounts };
+  };
+
   const connect = async () => {
     const isPhantomInstalled = detectPhantom();
     if (isPhantomInstalled) {
@@ -102,33 +134,7 @@ const PhantomProvider = ({ children }: Props) => {
     if (isAndroid()) {
       try {
         await transact(async (wallet) => {
-          let accounts = [];
-          let authToken = "";
-
-          const authTokenFromLocalStorage =
-            "eyJ0eXAiOiJwaGFudG9tLXdhbGxldC1hdXRoLXRva2VuIiwiaWlkIjoiOCIsInRpZCI6Ijk2In3cxu+9oCKBmq4HLQizSQT9l2MorQnxQb+azxxiYuAO1Q";
-          if (authTokenFromLocalStorage) {
-            const { accounts: acc, auth_token } = await wallet.reauthorize({
-              auth_token: authTokenFromLocalStorage,
-            });
-
-            console.log("authToken after reauthorize: ", auth_token);
-            accounts = acc;
-            authToken = auth_token;
-          } else {
-            const { accounts: acc, auth_token } = await wallet.authorize({
-              cluster: "mainnet-beta",
-              identity: {
-                uri: "https://www.glueprotocol.com/",
-                icon: "/glue-icon.png",
-                name: "Glue Protocol",
-              },
-            });
-
-            console.log("authToken after authorize: ", auth_token);
-            accounts = acc;
-            authToken = auth_token;
-          }
+          const { accounts } = await authoriseWithMobileWallet(wallet);
 
           const bufferData = Buffer.from(accounts[0].address, "base64");
           const publicKey = new PublicKey(bs58.encode(bufferData));
@@ -170,6 +176,7 @@ const PhantomProvider = ({ children }: Props) => {
         disconnect,
         detectPhantom,
         connected: !!phantomContext?.publicKey,
+        authoriseWithMobileWallet,
         ...phantomContext,
       }}
     >
