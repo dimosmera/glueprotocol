@@ -1,38 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Glue Protocol Interface
 
-## Getting Started
+An open source interface for Glue - a protocol for efficiently trading between assets on the Solana blockchain.
 
-First, run the development server:
+- Website: [glueprotocol.com](https://www.glueprotocol.com/)
+- Twitter: [@dimos851](https://twitter.com/dimos851)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+## Motivation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Make it easy for users to trade between different assets.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Inspiration
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+[This blog post by Vitalik](https://vitalik.eth.limo/general/2022/12/05/excited.html)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Use cases
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- John holds $USDC but Alice wants to get paid in $BONK. Using Glue, John can instantly convert and pay Alice in the asset of her choice.
+- John wants to pay Alice but he does not know her address. He can create a payment link and share it with Alice through email, social media or a text message - it's just a URL that contains tokens!
+- Alice wants to get paid so she creates a "Request Payment" link, specifying the asset she wants to receive and her address. Alice sends it to John who can pay her using his preferred token. _(coming soon)_
 
-## Learn More
+## On the shoulders of giants
 
-To learn more about Next.js, take a look at the following resources:
+Leveraging tech built by projects in the Solana ecosystem.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Jupiter](https://docs.jup.ag/) - using Jupiter's built-in swap transactions and token APIs
+- [Bonfida](https://bonfida.github.io/solana-name-service-guide/introduction.html) - mapping .sol domain names to SOL addresses
+- [Solana Mobile Stack](https://github.com/solana-mobile/mobile-wallet-adapter) - interacting with wallets on Android using the Mobile Wallet Adapter
+- [Droplinks](https://droplinks.io/docs/v1) - loading SPL tokens in links to power payment URLs
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Get involved
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Contributions are welcome! If you think a killer feature is missing or something can be done better, go ahead and file Issues, open Pull Requests, or join me on [Twitter](https://twitter.com/dimos851) to discuss any feedback.
