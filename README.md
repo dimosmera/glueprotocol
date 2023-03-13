@@ -1,9 +1,25 @@
-# Glue Protocol Interface
+<p align="center">
+  <a href="https://www.glueprotocol.com/" rel="noopener" target="_blank"><img width="135" src="public/glue-icon.png" alt="Glue protocol logo"></a>
+</p>
 
-An open source interface for Glue - a protocol for efficiently trading between assets on the Solana blockchain.
+<h1 align="center">Glue Protocol Interface</h1>
 
-- Website: [glueprotocol.com](https://www.glueprotocol.com/)
-- Twitter: [@dimos851](https://twitter.com/dimos851)
+<div align="center">
+
+An open source interface for Glue - a protocol for efficiently trading between assets on the Solana blockchain
+
+[Website](https://www.glueprotocol.com/) •
+[Twitter](https://twitter.com/dimos851)
+
+[Motivation](#motivation) •
+[Inspiration](#inspiration) •
+[Use cases](#use-cases) •
+[Integrations](#on-the-shoulders-of-giants) •
+[Get involved](#get-involved)
+
+</div>
+
+![Glue GIF Demo](https://dp-pet-images.s3.eu-west-2.amazonaws.com/glue-demo.gif)
 
 ## Motivation
 
