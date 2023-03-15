@@ -129,6 +129,7 @@ export const reducer = (state: Inputs, action: Action): Inputs => {
         lastChanged: undefined,
         amounts: { input: action.clearValue, output: action.clearValue },
         swapTransactionInputs: undefined,
+        error: undefined,
       };
     case ActionTypes.SET_DESTINATION_ADDRESS:
       return { ...state, destinationAddress: action.destinationAddress };

@@ -141,7 +141,7 @@ const useRoutes = () => {
   useEffect(() => {
     if (
       !debouncedInputAmount ||
-      debouncedInputAmount === "0" ||
+      parseFloat(debouncedInputAmount) === 0 ||
       lastChanged !== "input"
     )
       return;
@@ -154,7 +154,7 @@ const useRoutes = () => {
   useEffect(() => {
     if (
       !debouncedOutputAmount ||
-      debouncedOutputAmount === "0" ||
+      parseFloat(debouncedOutputAmount) === 0 ||
       lastChanged !== "output"
     )
       return;
