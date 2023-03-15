@@ -47,3 +47,7 @@ Leveraging tech built by projects in the Solana ecosystem.
 ## Get involved
 
 Contributions are welcome! If you think a killer feature is missing or something can be done better, go ahead and file Issues, open Pull Requests, or join me on [Twitter](https://twitter.com/dimos851) to discuss any feedback.
+
+## Grizzlython judges
+
+New code has been added since March 14th. If you want to review the code written during the hackathon, please check out the `grizzlython` branch.
