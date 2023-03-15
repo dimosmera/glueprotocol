@@ -6,10 +6,7 @@ import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
-import {
-  fireLoadingAlert,
-  fireErrorAlert,
-} from "components/SweetAlerts";
+import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 import includePlatformFee from "utils/includePlatformFee";
 import isAndroid from "utils/isAndroid";
 import dealWithMWAErrors from "utils/dealWithMWAErrors";
