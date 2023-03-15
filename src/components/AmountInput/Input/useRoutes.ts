@@ -11,13 +11,14 @@ import {
 import { IToken } from "services/api/useFetchTokens/useFetchTokens";
 import useDebouncedValue from "utils/useDebouncedValue";
 import includePlatformFee from "utils/includePlatformFee";
+import useParseRequestURL from "hooks/useParseRequestURL";
 
 /**
  * By default select the 1st and cheapest route
  */
 const getFirstRoute = (routes: SwapRoute[]) => routes[0];
 
-const getAmountToDispatch = (decimals: IToken["decimals"], amount: string) =>
+export const getAmountToDispatch = (decimals: IToken["decimals"], amount: string) =>
   (parseFloat(amount) / Math.pow(10, decimals)).toString();
 
 const getAmountForRoutes = (decimals: IToken["decimals"], amount: string) =>
@@ -55,6 +56,8 @@ const useRoutes = () => {
   const { inputs, dispatch } = useUserInputs();
 
   const { tokens: stateTokens, amounts, lastChanged, error } = inputs;
+
+  useParseRequestURL();
 
   const fireRequestForRoutes = async (type: TokenType, value: string) => {
     const { input, output } = stateTokens;
