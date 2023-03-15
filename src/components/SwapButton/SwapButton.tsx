@@ -6,10 +6,14 @@ import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
-import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
+import {
+  fireLoadingAlert,
+  fireErrorAlert,
+} from "components/SweetAlerts";
 import includePlatformFee from "utils/includePlatformFee";
 import isAndroid from "utils/isAndroid";
 import dealWithMWAErrors from "utils/dealWithMWAErrors";
+import isSolToken from "utils/isSolToken";
 
 import prepareSwapTransaction from "./prepareSwapTransaction";
 import styles from "./SwapButton.module.css";
@@ -57,11 +61,23 @@ const SwapButton = () => {
 
     if (isDisabled || loadingTransferTx) return;
 
-    fireLoadingAlert();
-    setLoadingTransferTx(true);
-
     // @ts-ignore - TS cannot infer we are checking for this
     const { route, amount: transferAmount } = swapTransactionInputs;
+
+    if (
+      isSolToken(outputToken.address) &&
+      paymentLinkVisible &&
+      transferAmount < 10_000_000
+    ) {
+      fireErrorAlert(
+        "When using payment links, the minimum transfer amount is 0.01 SOL",
+        10_000
+      );
+      return;
+    }
+
+    fireLoadingAlert();
+    setLoadingTransferTx(true);
 
     try {
       const { includeFee, platformFeeAccount } = await includePlatformFee(
