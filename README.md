@@ -51,3 +51,5 @@ Contributions are welcome! If you think a killer feature is missing or something
 ## Grizzlython judges
 
 New code has been added since March 14th. If you want to review the code written during the hackathon, please check out the `grizzlython` branch.
+
+A deployed version of this branch is available [here](https://glueprotocol-gmee6k8lo-dimosmera.vercel.app/)
