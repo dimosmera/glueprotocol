@@ -2,8 +2,6 @@
   flex-direction: column;
 
   width: 100%;
-  max-width: 28rem;
-  min-width: 300px;
 
   background-color: var(--blue-zodiac);
   border-radius: 12px;
