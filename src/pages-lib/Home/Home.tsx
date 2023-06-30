@@ -5,6 +5,8 @@ import TokensProvider from "context/TokensProvider";
 import UserInputsProvider from "context/UserInputsProvider";
 import Layout from "components/Layout";
 import ModeSelect, { SelectMode } from "components/ModeSelect/ModeSelect";
+import ElusivTransfer from "pages-lib/ElusivTransfer";
+import ElusivInputsProvider from "context/ElusivInputsProvider";
 
 import styles from "./Home.module.css";
 
@@ -29,7 +31,9 @@ export default function Home() {
             </UserInputsProvider>
           </TokensProvider>
         ) : (
-          <div>Private</div>
+          <ElusivInputsProvider>
+            <ElusivTransfer />
+          </ElusivInputsProvider>
         )}
       </div>
     </Layout>

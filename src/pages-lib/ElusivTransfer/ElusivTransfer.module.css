@@ -1,0 +1,10 @@
+.container {
+  flex-direction: column;
+
+  width: 100%;
+
+  background-color: var(--blue-zodiac);
+  border-radius: 12px;
+
+  padding: 2rem;
+}
