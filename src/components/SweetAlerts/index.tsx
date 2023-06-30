@@ -13,11 +13,15 @@ export const closeAlert = () => {
   Swal.close();
 };
 
-export const fireErrorAlert = (titleText?: string, timer?: number) =>
+export const fireErrorAlert = (
+  titleText?: string,
+  timer?: number,
+  icon?: "error" | "info"
+) =>
   fireSweetAlert({
     toast: true,
     position: "top-end",
-    icon: "error",
+    icon: icon || "error",
     timer: timer || 5000,
     showConfirmButton: false,
     title: (
