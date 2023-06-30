@@ -1,9 +1,9 @@
 import { TokenType } from "types";
 import { ActionTypes } from "context/UserInputsProvider/reducer";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
+import formatInputAmount from "utils/formatInputAmount";
 
 import useRoutes from "./useRoutes";
-import formatInputAmount from "./formatInputAmount";
 
 import styles from "./Input.module.css";
 
