@@ -18,8 +18,10 @@ import useParseRequestURL from "hooks/useParseRequestURL";
  */
 const getFirstRoute = (routes: SwapRoute[]) => routes[0];
 
-export const getAmountToDispatch = (decimals: IToken["decimals"], amount: string) =>
-  (parseFloat(amount) / Math.pow(10, decimals)).toString();
+export const getAmountToDispatch = (
+  decimals: IToken["decimals"],
+  amount: string
+) => (parseFloat(amount) / Math.pow(10, decimals)).toString();
 
 const getAmountForRoutes = (decimals: IToken["decimals"], amount: string) =>
   Math.round(parseFloat(amount) * Math.pow(10, decimals));
