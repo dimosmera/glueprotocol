@@ -35,3 +35,7 @@
 .option-text-selected {
   color: var(--white);
 }
+
+.elusiv-text {
+  margin-left: .75rem;
+}

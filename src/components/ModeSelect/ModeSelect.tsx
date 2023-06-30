@@ -1,3 +1,5 @@
+import NextImage from "next/image";
+
 import classList from "utils/classList";
 
 import styles from "./ModeSelect.module.css";
@@ -36,10 +38,20 @@ const ModeSelect = ({ mode, onModeSelect }: Props) => {
         ])}
         onClick={() => onModeSelect("elusiv")}
       >
+        <NextImage
+          src={
+            mode === "elusiv" ? "/elusiv-logo-white.svg" : "/elusiv-logo.svg"
+          }
+          alt="Elusiv token logo"
+          width={25}
+          height={25}
+        />
+
         <p
           className={classList([
             `semi-bold-text ${styles["option-text"]}`,
             mode === "elusiv" ? styles["option-text-selected"] : "",
+            styles["elusiv-text"],
           ])}
         >
           Elusiv
