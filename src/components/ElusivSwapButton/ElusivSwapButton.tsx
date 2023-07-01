@@ -8,6 +8,7 @@ import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 import getMainnetConnection from "utils/getMainnetConnection";
 import classList from "utils/classList";
+import getDestinationPubKey from "utils/getDestinationPubKey";
 
 import styles from "./ElusivSwapButton.module.css";
 
@@ -128,7 +129,11 @@ const ElusivSwapButton = () => {
     fireLoadingAlert("Sending.. This may take a while. Please hold");
     setLoadingTransferTx(true);
 
-    const destPublicKey = new PublicKey(destinationAddress);
+    const destPublicKey = await getDestinationPubKey(destinationAddress);
+    if (destPublicKey === null) {
+      fireErrorAlert("Failed. Check the recipient address");
+      return;
+    }
 
     try {
       const sendTx = await elusivInstance.buildSendTx(
