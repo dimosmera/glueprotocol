@@ -3,6 +3,7 @@ import NextLink from "next/link";
 
 import displayAddress from "utils/displayAddress";
 import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
+import SolflareSVG from "components/SolflareSVG";
 
 import styles from "./AppHeader.module.css";
 
@@ -41,7 +42,16 @@ const AppHeader = () => {
           Help
         </a>
 
-        <button className={styles["connect-button"]} onClick={handleConnect}>
+        <button
+          className={`flexbox ${styles["connect-button"]}`}
+          onClick={handleConnect}
+        >
+          {!publicKey && (
+            <SolflareSVG
+              style={{ width: "32px", height: "32px", marginRight: ".5rem" }}
+            />
+          )}
+
           {!publicKey ? "Connect Wallet" : displayAddress(publicKey.toString())}
         </button>
       </div>

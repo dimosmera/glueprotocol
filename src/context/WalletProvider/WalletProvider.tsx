@@ -62,9 +62,9 @@ export const getProvider = () => {
  * Supports only Solflare for now
  */
 const WalletProvider = ({ children }: Props) => {
-  const [walletContext, setWalletContext] = useState<
-  WalletContext | undefined
-  >(undefined);
+  const [walletContext, setWalletContext] = useState<WalletContext | undefined>(
+    undefined
+  );
 
   const handleSuccessfulConnection = (response: any) => {
     setWalletContext({
