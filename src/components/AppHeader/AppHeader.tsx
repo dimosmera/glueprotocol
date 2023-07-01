@@ -2,12 +2,12 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 
 import displayAddress from "utils/displayAddress";
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
 
 import styles from "./AppHeader.module.css";
 
 const AppHeader = () => {
-  const { publicKey, connect, disconnect } = useGetPhantomContext();
+  const { publicKey, connect, disconnect } = useGetWalletContext();
 
   const handleConnect = async () => {
     if (publicKey) {

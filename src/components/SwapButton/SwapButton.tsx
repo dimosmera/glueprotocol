@@ -2,7 +2,7 @@ import { useState } from "react";
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
 import bs58 from "bs58";
 
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
 import useFetchSwapTransaction from "services/api/useFetchSwapTransaction";
 import { useUserInputs } from "context/UserInputsProvider/UserInputsProvider";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
@@ -11,6 +11,7 @@ import includePlatformFee from "utils/includePlatformFee";
 import isAndroid from "utils/isAndroid";
 import dealWithMWAErrors from "utils/dealWithMWAErrors";
 import isSolToken from "utils/isSolToken";
+import getMainnetConnection from "utils/getMainnetConnection";
 
 import prepareSwapTransaction from "./prepareSwapTransaction";
 import styles from "./SwapButton.module.css";
@@ -18,11 +19,11 @@ import styles from "./SwapButton.module.css";
 const SwapButton = () => {
   const {
     publicKey,
-    signAndSendTransaction,
-    detectPhantom,
+    signTransaction,
+    detectWallet,
     connect,
     authoriseWithMobileWallet,
-  } = useGetPhantomContext();
+  } = useGetWalletContext();
 
   const { mutateAsync: fetchSwapTransaction } = useFetchSwapTransaction();
 
@@ -73,6 +74,8 @@ const SwapButton = () => {
       return;
     }
 
+    const connection = getMainnetConnection();
+
     fireLoadingAlert();
     setLoadingTransferTx(true);
 
@@ -102,7 +105,7 @@ const SwapButton = () => {
       );
       if (!transaction) return;
 
-      if (!detectPhantom()) {
+      if (!detectWallet()) {
         if (isAndroid()) {
           try {
             await transact(async (wallet) => {
@@ -136,12 +139,12 @@ const SwapButton = () => {
         }
       }
 
-      // skipPreflight defaults to false, but there's a phantom bug on mobile where it crashes if options passed are empty
-      // maybe they fix it in the future, then the options can be removed from here
-      const txResult = await signAndSendTransaction(transaction, {
-        skipPreflight: false,
-      });
-      fireSuccessAlert({ txId: txResult.signature });
+      const signedTransaction = await signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(
+        signedTransaction.serialize()
+      );
+
+      fireSuccessAlert({ txId: signature });
     } catch (error: any) {
       console.error(error);
 

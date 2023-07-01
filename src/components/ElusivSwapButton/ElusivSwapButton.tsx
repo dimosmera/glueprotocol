@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Elusiv, SEED_MESSAGE } from "@elusiv/sdk";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
 import { useUserInputs } from "context/ElusivInputsProvider/ElusivInputsProvider";
 import fireSuccessAlert from "components/SuccessAlert/fireSuccessAlert";
 import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
@@ -12,8 +12,8 @@ import classList from "utils/classList";
 import styles from "./ElusivSwapButton.module.css";
 
 const ElusivSwapButton = () => {
-  const { publicKey, signMessage, signTransaction, detectPhantom, connect } =
-    useGetPhantomContext();
+  const { publicKey, signMessage, signTransaction, connect } =
+    useGetWalletContext();
 
   const [loadingTransferTx, setLoadingTransferTx] = useState(false);
   const [loadingTopupTx, setLoadingTopupTx] = useState(false);
@@ -73,11 +73,6 @@ const ElusivSwapButton = () => {
   }, [elusivInstance]);
 
   const handleTopup = async () => {
-    if (!detectPhantom()) {
-      window.open("https://solflare.com/", "_blank");
-      return;
-    }
-
     if (isTopupDisabled) return;
 
     fireLoadingAlert("Topping up");
@@ -89,7 +84,6 @@ const ElusivSwapButton = () => {
         "LAMPORTS"
       );
 
-      // @ts-ignore
       topupTxData.tx = await signTransaction(topupTxData.tx);
 
       const storeSig = await elusivInstance.sendElusivTx(topupTxData);

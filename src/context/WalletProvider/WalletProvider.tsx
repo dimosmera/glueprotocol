@@ -1,6 +1,11 @@
 import React, { createContext, useEffect, useState } from "react";
 import bs58 from "bs58";
-import { PublicKey, SendOptions, VersionedTransaction } from "@solana/web3.js";
+import {
+  PublicKey,
+  SendOptions,
+  VersionedTransaction,
+  Transaction,
+} from "@solana/web3.js";
 import {
   MobileWallet,
   transact,
@@ -9,7 +14,7 @@ import {
 
 import { fireErrorAlert } from "components/SweetAlerts";
 import isiOS from "utils/isiOS";
-import openPhantomDeeplink from "utils/openPhantomDeeplink";
+import openWalletDeeplink from "utils/openWalletDeeplink";
 import isAndroid from "utils/isAndroid";
 import dealWithMWAErrors from "utils/dealWithMWAErrors";
 import {
@@ -19,29 +24,32 @@ import {
   removeItemFromLocalStorage,
 } from "services/localStorage";
 
-export const PhantomContext = createContext(undefined);
+export const WalletContext = createContext(undefined);
 
 interface Props {
   children: React.ReactNode;
 }
 
-interface PhantomContext {
+interface WalletContext {
   publicKey: PublicKey;
-  signAndSendTransaction: (
-    transaction: VersionedTransaction,
+  signMessage:
+    | ((message: Uint8Array) => Promise<{ signature: Uint8Array }>)
+    | undefined;
+  signTransaction: (
+    transaction: Transaction | VersionedTransaction,
     options?: SendOptions | undefined
-  ) => Promise<{ signature: string }>;
+  ) => Promise<Transaction>;
 }
 
 export const getProvider = () => {
   try {
     if (!window) return;
 
-    if ("phantom" in window) {
+    if ("solflare" in window) {
       // @ts-ignore
-      const provider = window.phantom?.solana;
+      const provider: any = window.solflare;
 
-      if (provider?.isPhantom) {
+      if (provider?.isSolflare) {
         return provider;
       }
     }
@@ -50,30 +58,26 @@ export const getProvider = () => {
   }
 };
 
-const PhantomProvider = ({ children }: Props) => {
-  const [phantomContext, setPhantomContext] = useState<
-    PhantomContext | undefined
+/**
+ * Supports only Solflare for now
+ */
+const WalletProvider = ({ children }: Props) => {
+  const [walletContext, setWalletContext] = useState<
+  WalletContext | undefined
   >(undefined);
 
   const handleSuccessfulConnection = (response: any) => {
-    setPhantomContext({
+    setWalletContext({
       publicKey: response.publicKey,
-      signAndSendTransaction: getProvider()?.signAndSendTransaction,
+      signMessage: getProvider()?.signMessage,
+      signTransaction: getProvider()?.signTransaction,
     });
   };
 
-  /**
-   * Will either automatically connect to Phantom, or do nothing
-   */
   useEffect(() => {
-    getProvider()
-      ?.connect({ onlyIfTrusted: true })
-      .then((response: any) => {
-        handleSuccessfulConnection(response);
-      })
-      .catch(() => {
-        // This is an eager connection. Do nothing.
-      });
+    getProvider()?.on("connect", (publicKey: any) => {
+      handleSuccessfulConnection({ publicKey });
+    });
   }, []);
 
   /**
@@ -81,7 +85,7 @@ const PhantomProvider = ({ children }: Props) => {
    */
   useEffect(() => {
     getProvider()?.on("disconnect", () => {
-      setPhantomContext(undefined);
+      setWalletContext(undefined);
     });
   }, []);
 
@@ -140,27 +144,29 @@ const PhantomProvider = ({ children }: Props) => {
     return { accounts };
   };
 
+  /**
+   * Resolves to <true> if the user accepted the connection request and <false> if not
+   */
   const connect = async () => {
-    const isPhantomInstalled = detectPhantom();
-    if (isPhantomInstalled) {
-      try {
-        const resp = await getProvider()?.connect();
-
-        handleSuccessfulConnection(resp);
-      } catch (err: any) {
-        if (err && err.code === 4001) {
-          fireErrorAlert("Connection rejected");
-          return;
-        }
-
-        fireErrorAlert();
-      }
+    const isWalletInstalled = detectWallet();
+    if (isWalletInstalled) {
+      getProvider()
+        ?.connect()
+        .then((resp: any) => {
+          if (!resp) {
+            fireErrorAlert("Connection rejected");
+            return;
+          }
+        })
+        .catch(() => {
+          fireErrorAlert();
+        });
 
       return;
     }
 
     if (isiOS()) {
-      openPhantomDeeplink(window.location.href);
+      openWalletDeeplink(window.location.href);
       return;
     }
 
@@ -183,12 +189,12 @@ const PhantomProvider = ({ children }: Props) => {
       return;
     }
 
-    window.open("https://phantom.app/", "_blank");
+    window.open("https://solflare.com/", "_blank");
   };
 
   const disconnect = async () => {
-    const isPhantomInstalled = detectPhantom();
-    if (isPhantomInstalled) {
+    const isWalletInstalled = detectWallet();
+    if (isWalletInstalled) {
       getProvider()?.disconnect();
 
       return;
@@ -199,7 +205,7 @@ const PhantomProvider = ({ children }: Props) => {
       if (!existingToken) return;
 
       removeItemFromLocalStorage(MWA_AUTH_TOKEN_KEY);
-      setPhantomContext(undefined);
+      setWalletContext(undefined);
 
       try {
         await transact(async (wallet) => {
@@ -216,32 +222,32 @@ const PhantomProvider = ({ children }: Props) => {
     }
   };
 
-  const detectPhantom = (): boolean => {
+  const detectWallet = (): boolean => {
     try {
       if (!window) return false;
 
       // @ts-ignore
-      return window.phantom?.solana?.isPhantom;
+      return window.solflare?.isSolflare;
     } catch (error) {
       return false;
     }
   };
 
   return (
-    <PhantomContext.Provider
+    <WalletContext.Provider
       // @ts-ignore
       value={{
         connect,
         disconnect,
-        detectPhantom,
-        connected: !!phantomContext?.publicKey,
+        detectWallet,
+        connected: !!walletContext?.publicKey,
         authoriseWithMobileWallet,
-        ...phantomContext,
+        ...walletContext,
       }}
     >
       {children}
-    </PhantomContext.Provider>
+    </WalletContext.Provider>
   );
 };
 
-export default PhantomProvider;
+export default WalletProvider;

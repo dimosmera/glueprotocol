@@ -6,18 +6,18 @@ import "styles/globals.css";
 import "styles/utilities.css";
 
 import AppQueryClientProvider from "context/AppQueryClientProvider";
-import PhantomProvider from "context/PhantomProvider";
+import WalletProvider from "context/WalletProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AppQueryClientProvider>
-      <PhantomProvider>
+      <WalletProvider>
         <main className={inter.className}>
           <Component {...pageProps} />
         </main>
-      </PhantomProvider>
+      </WalletProvider>
     </AppQueryClientProvider>
   );
 }
