@@ -2,7 +2,7 @@ import { useMutation } from "react-query";
 
 import { SwapRoute } from "types";
 import http from "services/api/config/http";
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
 
 interface Body {
   route: SwapRoute;
@@ -10,7 +10,7 @@ interface Body {
 }
 
 const useFetchSwapTransaction = () => {
-  const { publicKey } = useGetPhantomContext();
+  const { publicKey } = useGetWalletContext();
 
   return useMutation(async ({ route, feeAccount }: Body) =>
     http().post("https://quote-api.jup.ag/v4/swap", {

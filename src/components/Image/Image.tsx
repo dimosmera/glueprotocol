@@ -1,8 +1,8 @@
 interface Props {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  width: number | string;
+  height: number | string;
 }
 
 // 1x1 pixel image generated from https://shoonia.github.io/1x1/#00000014

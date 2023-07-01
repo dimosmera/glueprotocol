@@ -2,12 +2,13 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 
 import displayAddress from "utils/displayAddress";
-import useGetPhantomContext from "context/PhantomProvider/useGetPhantomContext";
+import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
+import SolflareSVG from "components/SolflareSVG";
 
 import styles from "./AppHeader.module.css";
 
 const AppHeader = () => {
-  const { publicKey, connect, disconnect } = useGetPhantomContext();
+  const { publicKey, connect, disconnect } = useGetWalletContext();
 
   const handleConnect = async () => {
     if (publicKey) {
@@ -41,7 +42,16 @@ const AppHeader = () => {
           Help
         </a>
 
-        <button className={styles["connect-button"]} onClick={handleConnect}>
+        <button
+          className={`flexbox ${styles["connect-button"]}`}
+          onClick={handleConnect}
+        >
+          {!publicKey && (
+            <SolflareSVG
+              style={{ width: "32px", height: "32px", marginRight: ".5rem" }}
+            />
+          )}
+
           {!publicKey ? "Connect Wallet" : displayAddress(publicKey.toString())}
         </button>
       </div>

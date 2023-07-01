@@ -1,0 +1,41 @@
+.container {
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+
+  margin-bottom: 2.5rem;
+
+  background-color: var(--blue-zodiac);
+}
+
+.box {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  margin-right: .25rem;
+  margin-left: .25rem;
+
+  background-color: var(--blue-zodiac);
+}
+
+.box-selected {
+  background-color: var(--denim);
+}
+
+.option-text {
+  color: var(--heather);
+  font-size: var(--font-size-sm-plus);
+}
+
+.option-text:hover {
+  color: var(--white);
+}
+
+.option-text-selected {
+  color: var(--white);
+}
+
+.elusiv-text {
+  margin-left: .75rem;
+}
