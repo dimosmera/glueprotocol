@@ -12,9 +12,9 @@ import getDestinationPubKey from "utils/getDestinationPubKey";
 import { fireSweetAlert } from "components/SweetAlerts";
 
 import TopupSOLAmount from "./TopupSOLAmount";
-import styles from "./ElusivSwapButton.module.css";
+import styles from "./ElusivSendButton.module.css";
 
-const ElusivSwapButton = () => {
+const ElusivSendButton = () => {
   const { publicKey, signMessage, signTransaction, connect } =
     useGetWalletContext();
 
@@ -211,4 +211,4 @@ const ElusivSwapButton = () => {
   );
 };
 
-export default ElusivSwapButton;
+export default ElusivSendButton;
