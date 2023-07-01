@@ -1,6 +1,6 @@
 import ElusivAmountInput from "components/ElusivAmountInput";
 import ElusivRecipientInput from "components/ElusivRecipientInput";
-import SwapButton from "components/SwapButton";
+import ElusivSwapButton from "components/ElusivSwapButton";
 
 import styles from "./ElusivTransfer.module.css";
 
@@ -10,6 +10,8 @@ const ElusivTransfer = () => {
       <ElusivAmountInput />
 
       <ElusivRecipientInput />
+
+      <ElusivSwapButton />
     </div>
   );
 };
