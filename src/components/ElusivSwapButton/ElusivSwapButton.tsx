@@ -9,7 +9,9 @@ import { fireLoadingAlert, fireErrorAlert } from "components/SweetAlerts";
 import getMainnetConnection from "utils/getMainnetConnection";
 import classList from "utils/classList";
 import getDestinationPubKey from "utils/getDestinationPubKey";
+import { fireSweetAlert } from "components/SweetAlerts";
 
+import TopupSOLAmount from "./TopupSOLAmount";
 import styles from "./ElusivSwapButton.module.css";
 
 const ElusivSwapButton = () => {
@@ -73,7 +75,7 @@ const ElusivSwapButton = () => {
     getPrivateBalance(elusivInstance);
   }, [elusivInstance]);
 
-  const handleTopup = async () => {
+  const handleTopup = async (topupAmount: number) => {
     if (isTopupDisabled) return;
 
     fireLoadingAlert("Topping up");
@@ -81,7 +83,7 @@ const ElusivSwapButton = () => {
 
     try {
       const topupTxData = await elusivInstance.buildTopUpTx(
-        LAMPORTS_PER_SOL / 100,
+        Math.round(topupAmount * Math.pow(10, token.decimals)),
         "LAMPORTS"
       );
 
@@ -103,6 +105,17 @@ const ElusivSwapButton = () => {
     }
 
     setLoadingTopupTx(false);
+  };
+
+  const handleTopUpClick = () => {
+    if (isTopupDisabled) return;
+
+    fireSweetAlert({
+      html: <TopupSOLAmount onTopUp={handleTopup} />,
+      showConfirmButton: false,
+      showCloseButton: true,
+      background: "#0E1C37",
+    });
   };
 
   const handleElusivSend = async () => {
@@ -172,7 +185,7 @@ const ElusivSwapButton = () => {
 
         <button
           className={styles["topup-button"]}
-          onClick={handleTopup}
+          onClick={handleTopUpClick}
           disabled={isTopupDisabled}
         >
           Top up
