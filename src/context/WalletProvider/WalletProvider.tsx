@@ -59,7 +59,7 @@ export const getProvider = () => {
 };
 
 /**
- * Supports only Solflare for now
+ * Supports only Solflare and the Mobile Wallet Adapter for now
  */
 const WalletProvider = ({ children }: Props) => {
   const [walletContext, setWalletContext] = useState<WalletContext | undefined>(
