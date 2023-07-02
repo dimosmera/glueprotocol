@@ -52,14 +52,12 @@ const ElusivSendButton = () => {
       try {
         await transact(async (wallet) => {
           const authResult = await authoriseWithMobileWallet(wallet);
-          console.log('accounts address: ', authResult.accounts[0].address);
-          const txBuffer = Buffer.from(authResult.accounts[0].address, "base64");
-          const decodedAddress = bs58.encode(txBuffer);
-          console.log('decodedSignature: ', decodedAddress);
+          const addressBuffer = Buffer.from(authResult.accounts[0].address, "base64");
+          const decodedAddress = bs58.encode(addressBuffer);
 
           const {
             signed_payloads: [signature],
-          } = await wallet.signMessages({ addresses: [publicKey.toString()], payloads: [SEED_MESSAGE] });
+          } = await wallet.signMessages({ addresses: [decodedAddress], payloads: [SEED_MESSAGE] });
 
           console.log('signature: ', signature);
 
