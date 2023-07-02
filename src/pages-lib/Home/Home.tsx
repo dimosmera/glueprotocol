@@ -22,6 +22,21 @@ export default function Home() {
   return (
     <Layout>
       <div className={`flexbox ${styles.container}`}>
+        <div className={`flexbox ${styles.caption}`}>
+          <p>
+            Private sending is disabled until the team fixes an issue with the
+            Elusiv SDK. See
+            <a
+              href="https://github.com/elusiv-privacy/elusiv-sdk/issues/15"
+              target="_blank"
+              rel="noopener"
+              style={{ marginLeft: "4px", marginRight: "4px" }}
+            >
+              Issue #15
+            </a>
+            for more.
+          </p>
+        </div>
         <ModeSelect mode={mode} onModeSelect={handleModeSelect} />
 
         {mode === "default" ? (

@@ -5,3 +5,17 @@
   max-width: 28rem;
   min-width: 300px;
 }
+
+.caption {
+  width: 100%;
+
+  background-color: var(--golden-rod);
+  color: var(--black);
+
+  text-align: center;
+
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+  margin-top: 2rem;
+}
