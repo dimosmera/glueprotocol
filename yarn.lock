@@ -69,7 +69,16 @@
     "@protobufjs/float" "^1.0.2"
     "@protobufjs/utf8" "^1.1.0"
 
-"@elusiv/ffjavascript@^0.2.57":
+"@elusiv/cryptojs@^1.0.1":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@elusiv/cryptojs/-/cryptojs-1.0.11.tgz#2f848f9b77491e2f0e77c6cc63d619dc353e75ff"
+  integrity sha512-Xr/0Ilg+7Ts0LopjkyPBB0pHLBEKbcWC6Q9f1xJY/heo2yHGLNEO+B1rlW8TfF8VcV+JMAXrGpNs8wXkcWrn2A==
+  dependencies:
+    "@elusiv/ffjavascript" "^0.2.59"
+    "@elusiv/serialization" "^1.0.1"
+    "@noble/ed25519" "^1.7.1"
+
+"@elusiv/ffjavascript@^0.2.57", "@elusiv/ffjavascript@^0.2.59":
   version "0.2.59"
   resolved "https://registry.yarnpkg.com/@elusiv/ffjavascript/-/ffjavascript-0.2.59.tgz#1f6efa85ff2fa896dae45deedd4610448b58c964"
   integrity sha512-bfdhkIPvCbc50umTza254EC6aUC91ZExKCEZ6Ar4Y1ygdcm4AWVw+Yw+T6NT3aaGrNbznMbuepr6szqbxBWKDQ==
@@ -78,13 +87,15 @@
     wasmcurves "0.2.1"
     web-worker "^1.2.0"
 
-"@elusiv/sdk@^0.1.16":
-  version "0.1.16"
-  resolved "https://registry.yarnpkg.com/@elusiv/sdk/-/sdk-0.1.16.tgz#b772f6176afe742085e1850c6dd9705f2217c28d"
-  integrity sha512-nAW+yLcQyRMR/ZwvILJUy9qeSjm/xZkY9sCeAwf3QOdnPh63TfBqDOmczkRIrmNNXXuV+PjEctC71yAJ7rztlw==
+"@elusiv/sdk@^0.1.17":
+  version "0.1.17"
+  resolved "https://registry.yarnpkg.com/@elusiv/sdk/-/sdk-0.1.17.tgz#fa4365b0c8e786f5e5a6a674b9c88d6b867b6700"
+  integrity sha512-CsdUiKVZD1rbJAzKXbHNF9d7FBaI/Jgo2QtAU9sD7LYdgxsE5Vl+2fxARQLjMBbGAqb957RiNaYH0ZrDk0xXEQ==
   dependencies:
     "@dao-xyz/borsh" "^5.1.5"
+    "@elusiv/cryptojs" "^1.0.1"
     "@elusiv/ffjavascript" "^0.2.57"
+    "@elusiv/serialization" "^1.0.1"
     "@noble/hashes" "^1.1.5"
     "@pythnetwork/client" "^2.19.0"
     "@solana/spl-token" "^0.3.5"
@@ -93,6 +104,11 @@
     bs58 "^5.0.0"
     circomlibjs "^0.1.7"
     node-fetch "^3.3.1"
+
+"@elusiv/serialization@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@elusiv/serialization/-/serialization-1.0.1.tgz#bfa74047816418a1bf10ec0215450a032e0d531e"
+  integrity sha512-ejWGJny9Dw+X4lSZQgx9/GSSskmkDQ8Y21tHes8t+FnqjXPMots4kFb4guVONKvTtpFYySzGQxZ/EIp0T5/naw==
 
 "@eslint/eslintrc@^2.0.0":
   version "2.0.0"
@@ -559,7 +575,7 @@
   dependencies:
     "@noble/hashes" "1.3.1"
 
-"@noble/ed25519@^1.7.0":
+"@noble/ed25519@^1.7.0", "@noble/ed25519@^1.7.1":
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/@noble/ed25519/-/ed25519-1.7.3.tgz#57e1677bf6885354b466c38e2b620c62f45a7123"
   integrity sha512-iR8GBkDt0Q3GyaVcIu7mSsVIqnFbkbRzGLWlvhwunacoLwt4J3swfKhfaM6rN6WY+TBGoYT1GtT1mIh2/jGbRQ==
