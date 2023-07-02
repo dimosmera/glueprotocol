@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Elusiv, SEED_MESSAGE } from "@elusiv/sdk";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
+import bs58 from "bs58";
 
 import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
 import { useUserInputs } from "context/ElusivInputsProvider/ElusivInputsProvider";
@@ -50,8 +51,11 @@ const ElusivSendButton = () => {
     if (isAndroid() && publicKey) {
       try {
         await transact(async (wallet) => {
-          const accounts = await authoriseWithMobileWallet(wallet);
-          console.log('accounts: ', accounts);
+          const authResult = await authoriseWithMobileWallet(wallet);
+          console.log('accounts address: ', authResult.accounts[0].address);
+          const txBuffer = Buffer.from(authResult.accounts[0].address, "base64");
+          const decodedAddress = bs58.encode(txBuffer);
+          console.log('decodedSignature: ', decodedAddress);
 
           const {
             signed_payloads: [signature],
