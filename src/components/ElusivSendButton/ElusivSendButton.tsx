@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Elusiv, SEED_MESSAGE } from "@elusiv/sdk";
+// import { Elusiv, SEED_MESSAGE } from "@elusiv/sdk";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
@@ -20,7 +20,7 @@ const ElusivSendButton = () => {
 
   const [loadingTransferTx, setLoadingTransferTx] = useState(false);
   const [loadingTopupTx, setLoadingTopupTx] = useState(false);
-  const [elusivInstance, setElusivInstance] = useState<null | Elusiv>(null);
+  // const [elusivInstance, setElusivInstance] = useState<null | Elusiv>(null);
   const [elusivPrivateBalance, setElusivPrivateBalance] = useState(0);
 
   const { inputs } = useUserInputs();
@@ -28,146 +28,146 @@ const ElusivSendButton = () => {
 
   const isSendDisabled =
     (publicKey &&
-      elusivInstance &&
+      // elusivInstance &&
       (!amount || !destinationAddress || destinationAddress === "")) ||
     loadingTransferTx ||
     loadingTopupTx;
 
   const isTopupDisabled =
-    !publicKey || loadingTransferTx || loadingTopupTx || !elusivInstance;
+    !publicKey || loadingTransferTx || loadingTopupTx; //  || !elusivInstance
 
-  const getElusivInstance = async (pK: PublicKey) => {
-    const connection = getMainnetConnection();
+  // const getElusivInstance = async (pK: PublicKey) => {
+  //   const connection = getMainnetConnection();
 
-    try {
-      const signedMessage = await signMessage(
-        Buffer.from(SEED_MESSAGE, "utf-8")
-      );
-      const { signature } = signedMessage;
+  //   try {
+  //     const signedMessage = await signMessage(
+  //       Buffer.from(SEED_MESSAGE, "utf-8")
+  //     );
+  //     const { signature } = signedMessage;
 
-      const elusiv = await Elusiv.getElusivInstance(
-        signature,
-        pK,
-        connection,
-        "mainnet-beta"
-      );
+  //     const elusiv = await Elusiv.getElusivInstance(
+  //       signature,
+  //       pK,
+  //       connection,
+  //       "mainnet-beta"
+  //     );
 
-      setElusivInstance(elusiv);
-    } catch (err: any) {
-      console.error(err);
+  //     setElusivInstance(elusiv);
+  //   } catch (err: any) {
+  //     console.error(err);
 
-      if (err && err === "Transaction cancelled") {
-        fireErrorAlert("Canceled");
-      } else {
-        fireErrorAlert("Failed. Please try again.");
-      }
-    }
-  };
+  //     if (err && err === "Transaction cancelled") {
+  //       fireErrorAlert("Canceled");
+  //     } else {
+  //       fireErrorAlert("Failed. Please try again.");
+  //     }
+  //   }
+  // };
 
-  const getPrivateBalance = async (elusiv: Elusiv) => {
-    const privateBalance = await elusiv.getLatestPrivateBalance("LAMPORTS");
-    setElusivPrivateBalance(Number(privateBalance) / LAMPORTS_PER_SOL);
-  };
+  // const getPrivateBalance = async (elusiv: Elusiv) => {
+  //   const privateBalance = await elusiv.getLatestPrivateBalance("LAMPORTS");
+  //   setElusivPrivateBalance(Number(privateBalance) / LAMPORTS_PER_SOL);
+  // };
 
-  useEffect(() => {
-    if (!elusivInstance) return;
+  // useEffect(() => {
+  //   if (!elusivInstance) return;
 
-    getPrivateBalance(elusivInstance);
-  }, [elusivInstance]);
+  //   getPrivateBalance(elusivInstance);
+  // }, [elusivInstance]);
 
-  const handleTopup = async (topupAmount: number) => {
-    if (isTopupDisabled) return;
+  // const handleTopup = async (topupAmount: number) => {
+  //   if (isTopupDisabled) return;
 
-    fireLoadingAlert("Topping up");
-    setLoadingTopupTx(true);
+  //   fireLoadingAlert("Topping up");
+  //   setLoadingTopupTx(true);
 
-    try {
-      const topupTxData = await elusivInstance.buildTopUpTx(
-        Math.round(topupAmount * Math.pow(10, token.decimals)),
-        "LAMPORTS"
-      );
+  //   try {
+  //     const topupTxData = await elusivInstance.buildTopUpTx(
+  //       Math.round(topupAmount * Math.pow(10, token.decimals)),
+  //       "LAMPORTS"
+  //     );
 
-      topupTxData.tx = await signTransaction(topupTxData.tx);
+  //     topupTxData.tx = await signTransaction(topupTxData.tx);
 
-      const storeSig = await elusivInstance.sendElusivTx(topupTxData);
+  //     const storeSig = await elusivInstance.sendElusivTx(topupTxData);
 
-      fireSuccessAlert({ txId: storeSig.signature });
+  //     fireSuccessAlert({ txId: storeSig.signature });
 
-      await getPrivateBalance(elusivInstance);
-    } catch (err: any) {
-      console.error(err);
+  //     await getPrivateBalance(elusivInstance);
+  //   } catch (err: any) {
+  //     console.error(err);
 
-      if (err && err.message === "Failed to sign transaction") {
-        fireErrorAlert("Canceled");
-      } else {
-        fireErrorAlert("Failed. Please try again.");
-      }
-    }
+  //     if (err && err.message === "Failed to sign transaction") {
+  //       fireErrorAlert("Canceled");
+  //     } else {
+  //       fireErrorAlert("Failed. Please try again.");
+  //     }
+  //   }
 
-    setLoadingTopupTx(false);
-  };
+  //   setLoadingTopupTx(false);
+  // };
 
   const handleTopUpClick = () => {
     if (isTopupDisabled) return;
 
     fireSweetAlert({
-      html: <TopupSOLAmount onTopUp={handleTopup} />,
+      html: <TopupSOLAmount onTopUp={() => {}} />, // onTopUp={handleTopup}
       showConfirmButton: false,
       showCloseButton: true,
       background: "#0E1C37",
     });
   };
 
-  const handleElusivSend = async () => {
-    if (!publicKey) {
-      connect();
+  // const handleElusivSend = async () => {
+  //   if (!publicKey) {
+  //     connect();
 
-      return;
-    }
+  //     return;
+  //   }
 
-    if (!elusivInstance) {
-      getElusivInstance(publicKey);
+  //   if (!elusivInstance) {
+  //     getElusivInstance(publicKey);
 
-      return;
-    }
+  //     return;
+  //   }
 
-    if (isSendDisabled) return;
+  //   if (isSendDisabled) return;
 
-    if (Number(amount) > elusivPrivateBalance) {
-      fireErrorAlert("Not enough in your private balance. Please top up");
+  //   if (Number(amount) > elusivPrivateBalance) {
+  //     fireErrorAlert("Not enough in your private balance. Please top up");
 
-      return;
-    }
+  //     return;
+  //   }
 
-    fireLoadingAlert("Sending.. This may take a while. Please hold");
-    setLoadingTransferTx(true);
+  //   fireLoadingAlert("Sending.. This may take a while. Please hold");
+  //   setLoadingTransferTx(true);
 
-    const destPublicKey = await getDestinationPubKey(destinationAddress);
-    if (destPublicKey === null) {
-      fireErrorAlert("Failed. Check the recipient address");
-      return;
-    }
+  //   const destPublicKey = await getDestinationPubKey(destinationAddress);
+  //   if (destPublicKey === null) {
+  //     fireErrorAlert("Failed. Check the recipient address");
+  //     return;
+  //   }
 
-    try {
-      const sendTx = await elusivInstance.buildSendTx(
-        Math.round(parseFloat(amount) * Math.pow(10, token.decimals)),
-        destPublicKey,
-        "LAMPORTS"
-      );
+  //   try {
+  //     const sendTx = await elusivInstance.buildSendTx(
+  //       Math.round(parseFloat(amount) * Math.pow(10, token.decimals)),
+  //       destPublicKey,
+  //       "LAMPORTS"
+  //     );
 
-      const sendSig = await elusivInstance.sendElusivTx(sendTx);
+  //     const sendSig = await elusivInstance.sendElusivTx(sendTx);
 
-      fireSuccessAlert({ txId: sendSig.signature });
+  //     fireSuccessAlert({ txId: sendSig.signature });
 
-      await getPrivateBalance(elusivInstance);
-    } catch (err: any) {
-      console.error(err);
+  //     await getPrivateBalance(elusivInstance);
+  //   } catch (err: any) {
+  //     console.error(err);
 
-      fireErrorAlert("Failed. Please try again.");
-    }
+  //     fireErrorAlert("Failed. Please try again.");
+  //   }
 
-    setLoadingTransferTx(false);
-  };
+  //   setLoadingTransferTx(false);
+  // };
 
   return (
     <>
@@ -175,10 +175,10 @@ const ElusivSendButton = () => {
         <p
           className={classList([
             styles["balance-text"],
-            !elusivInstance ? styles["balance-text-disabled"] : "",
+            // !elusivInstance ? styles["balance-text-disabled"] : "",
           ])}
         >
-          {!elusivInstance
+          {false // !elusivInstance
             ? "Private balance: -"
             : `Private balance: ${elusivPrivateBalance} SOL`}
         </p>
@@ -193,17 +193,17 @@ const ElusivSendButton = () => {
       </div>
 
       <button
-        onClick={
-          !elusivInstance && publicKey
-            ? () => getElusivInstance(publicKey)
-            : handleElusivSend
-        }
+        // onClick={
+        //   !elusivInstance && publicKey
+        //     ? () => getElusivInstance(publicKey)
+        //     : handleElusivSend
+        // }
         className={styles.button}
         disabled={isSendDisabled}
       >
         {!publicKey
           ? "Connect Wallet"
-          : !elusivInstance
+          : false // !elusivInstance
           ? "Get started with Elusiv"
           : "Send Privately"}
       </button>
