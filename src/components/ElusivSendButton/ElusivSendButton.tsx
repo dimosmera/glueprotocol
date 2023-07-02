@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Elusiv, SEED_MESSAGE } from "@elusiv/sdk";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { transact } from "@solana-mobile/mobile-wallet-adapter-protocol";
 
 import useGetWalletContext from "context/WalletProvider/useGetWalletContext";
 import { useUserInputs } from "context/ElusivInputsProvider/ElusivInputsProvider";
@@ -10,13 +11,20 @@ import getMainnetConnection from "utils/getMainnetConnection";
 import classList from "utils/classList";
 import getDestinationPubKey from "utils/getDestinationPubKey";
 import { fireSweetAlert } from "components/SweetAlerts";
+import isAndroid from "utils/isAndroid";
+import dealWithMWAErrors from "utils/dealWithMWAErrors";
 
 import TopupSOLAmount from "./TopupSOLAmount";
 import styles from "./ElusivSendButton.module.css";
 
 const ElusivSendButton = () => {
-  const { publicKey, signMessage, signTransaction, connect } =
-    useGetWalletContext();
+  const {
+    publicKey,
+    signMessage,
+    signTransaction,
+    connect,
+    authoriseWithMobileWallet,
+  } = useGetWalletContext();
 
   const [loadingTransferTx, setLoadingTransferTx] = useState(false);
   const [loadingTopupTx, setLoadingTopupTx] = useState(false);
@@ -38,6 +46,37 @@ const ElusivSendButton = () => {
 
   const getElusivInstance = async (pK: PublicKey) => {
     const connection = getMainnetConnection();
+
+    if (isAndroid() && publicKey) {
+      try {
+        await transact(async (wallet) => {
+          const accounts = await authoriseWithMobileWallet(wallet);
+          console.log('accounts: ', accounts);
+
+          const {
+            signed_payloads: [signature],
+          } = await wallet.signMessages({ addresses: [publicKey.toString()], payloads: [SEED_MESSAGE] });
+
+          console.log('signature: ', signature);
+
+          const elusiv = await Elusiv.getElusivInstance(
+            Buffer.from(signature, "utf-8"),
+            pK,
+            connection,
+            "mainnet-beta"
+          );
+
+          setElusivInstance(elusiv);
+        });
+      } catch (error: any) {
+        console.log("MWA signMessages error: ", error);
+        console.error(error);
+
+        dealWithMWAErrors(error);
+      }
+
+      return;
+    }
 
     try {
       const signedMessage = await signMessage(
