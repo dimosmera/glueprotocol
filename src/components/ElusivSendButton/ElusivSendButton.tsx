@@ -55,9 +55,12 @@ const ElusivSendButton = () => {
           const addressBuffer = Buffer.from(authResult.accounts[0].address, "base64");
           const decodedAddress = bs58.encode(addressBuffer);
 
+          const messageToSign = Buffer.from(SEED_MESSAGE, "utf-8")
+          console.log('messageToSign: ', messageToSign);
+
           const {
             signed_payloads: [signature],
-          } = await wallet.signMessages({ addresses: [decodedAddress], payloads: [SEED_MESSAGE] });
+          } = await wallet.signMessages({ addresses: [decodedAddress], payloads: [messageToSign.toString("base64")] });
 
           console.log('signature: ', signature);
 
