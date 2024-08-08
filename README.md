@@ -8,7 +8,7 @@
 
 An open source interface for Glue - a protocol for efficiently and privately trading between assets on the Solana blockchain
 
-[Website](https://www.glueprotocol.com/) •
+[Website](https://glueprotocol.vercel.app/) •
 [Twitter](https://twitter.com/dimos851)
 
 [Motivation](#motivation) •
@@ -29,7 +29,7 @@ Make it easy for users to trade between different assets.
 
 Using [Elusiv's SDK](https://elusiv-privacy.github.io/elusiv-sdk/) Glue now supports private payments!
 
-[Try it out](https://www.glueprotocol.com/)
+[Try it out](https://glueprotocol.vercel.app/)
 
 ## Inspiration
 
